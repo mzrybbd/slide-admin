@@ -186,8 +186,7 @@ export default {
   proxy: {
     '/api/': {
       target: 'http://admin-slide.aixuexi.com',
-      changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      changeOrigin: true
     },
   },
 };

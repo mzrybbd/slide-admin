@@ -14,9 +14,12 @@ import {
   Row,
   Select,
   message,
+  Popconfirm,
   Table
 } from 'antd';
 import React, { Component, Fragment } from 'react';
+import { CreateComment } from './components/createComment'
+import UpdateComment from './components/updateComment'
 
 import { connect } from 'dva';
 @connect(({ comment, loading }) => ({  
@@ -25,19 +28,19 @@ import { connect } from 'dva';
 }))
 export default class TableList extends Component {
   state = {
-    modalVisible: false,
+    visible: false,
     updateModalVisible: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    data:[]
   };
-
   columns = [
     {
       title: '标注图标',
       dataIndex: 'iconSrc',
       render: (text, record) => (
-          <img src={ text } style={{ width:'20px', height:'20px' }} />
+        <img src={ text } style={{ width:'20px', height:'20px' }} />
       ),
     },
     {
@@ -58,15 +61,51 @@ export default class TableList extends Component {
         <Fragment>
           <a onClick={() => this.handleUpdateModalVisible(true, record)}>编辑</a>
           <Divider type="vertical" />
-          <a href="">删除</a>
+          <Popconfirm title="确定删除吗？" okText="确认" cancelText="取消" onConfirm={() => this.handleDelete(record)}>
+							<a href="javascript;">删除</a>
+						</Popconfirm>
         </Fragment>
       ),
     },
   ];
+  handleSubmit() {
+
+  }
+  handleCancel = () => {
+    this.setState({ visible: false });
+  };
+  handleDelete = (record) => {
+    this.setState({data: this.state.data.filter(val => val.id !== record.id)})
+    console.log(this.state.data)
+  }
+  showModal = () => {
+    console.log('hhh')
+    this.setState({ visible: true });
+  };
+
+  handleCancel = () => {
+    this.setState({ visible: false });
+  };
+
+  handleCreate = () => {
+    const { form } = this.formRef.props;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+
+      console.log('Received values of form: ', values);
+      form.resetFields();
+      this.setState({ visible: false });
+    });
+  };
+
+  saveFormRef = formRef => {
+    this.formRef = formRef;
+  };
 
   constructor() {
     super()
-    
   }
 
   componentDidMount() {
@@ -85,20 +124,24 @@ export default class TableList extends Component {
   }
   render() {
     const { comment: { list } } = this.props;
-    const data = [...list];
+    this.state.data = [...list];
 
     return (
       <div>
-        <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+        <Button icon="plus" type="primary" onClick={() => this.showModal()}>
           新建
         </Button>
         <Table
-          dataSource={data}
+          dataSource={this.state.data}
           pagination={false}
           columns={this.columns}
           onChange={this.handleStandardTableChange}
           rowKey={(record, index) => index}
         />
+        <CreateComment wrappedComponentRef={this.saveFormRef}
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          onCreate={this.handleCreate} />
       </div>
     )
   }
