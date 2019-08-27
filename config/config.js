@@ -105,13 +105,25 @@ export default {
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/courseTemplate',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
+              path: '/courseTemplate',
+              name: 'courseTemplate',
+              icon: 'profile',
+              component: './courseTemplate',
+            },
+            {
+              path: '/contentTemplate',
+              name: 'contentTemplate',
+              icon: 'project',
+              component: './contentTemplate',
+            },
+            {
+              path: '/commentBlocks',
+              name: 'commentBlocks',
+              icon: 'edit',
+              component: './commentBlocks',
             },
             {
               component: './404',
