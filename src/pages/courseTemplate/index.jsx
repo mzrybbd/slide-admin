@@ -1,61 +1,395 @@
-import React from 'react';
-import { Card, Typography } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { FormattedMessage } from 'umi-plugin-react/locale';
+import { Card, Col, Form, List, Row, Select, Typography, Button, Pagination, message, Modal, ConfigProvider } from 'antd';
+import React, { Component } from 'react';
+import { connect } from 'dva';
+import moment from 'moment';
+import StandardFormRow from './components/StandardFormRow';
+import TagSelect from './components/TagSelect';
+import CreateTemplateModal from './components/createTemplateModal.jsx'
+import styles from './style.less';
+const { Option } = Select;
+const FormItem = Form.Item;
+const { Paragraph } = Typography;
+const { confirm } = Modal;
+import router from 'umi/router';
 
-const CodePreview = ({ children }) => (
-  <pre
-    style={{
-      background: '#f2f4f5',
-      padding: '1y2px 20px',
-      margin: '12px 0',
-    }}
-  >
-    <code>
-      <Typography.Text copyable>{children}</Typography.Text>
-    </code>
-  </pre>
-);
+class Projects extends Component {
+  state = { 
+    visible: false,
+    flag: false,
+    current: 1,
+    flag: true,
+    num: 12
+  };
+  editTemplate = (id) => {
+    router.push('/courseTemplate/' + id);
+  }
 
-export default () => (
-  <PageHeaderWrapper>
-    <Card>
-      <Typography.Text strong>
-        <a target="_blank" rel="noopener noreferrer" href="https://pro.ant.design/docs/block">
-          <FormattedMessage
-            id="app.welcome.link.block-list"
-            defaultMessage="基于 block 开发，快速构建标准页面"
-          />
-        </a>
-      </Typography.Text>
-      <CodePreview>npx umi block list</CodePreview>
-      <Typography.Text
-        strong
-        style={{
-          marginBottom: 12,
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+
+  handleCreate = e => {
+    console.log(this.formRef.getItemsValue()); 
+    this.setState({
+      visible: false,
+    });
+  };
+
+  handleCancel = e => {
+    console.log(e);
+    this.setState({
+      visible: false,
+    });
+  }; 
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    let id = 1
+    
+    dispatch({
+      type: 'listSearchProjects/fetch2',
+    }).then(() => {
+      const {
+       listSearchProjects: { staticData = {} },
+     } = this.props;
+     const { subjectProductList = []} = staticData
+      id = subjectProductList[0].id
+      dispatch({
+        type: 'listSearchProjects/fetch3',
+        payload: {
+          id: id,
+        },
+      })
+    }).then(() => {
+      const {
+        listSearchProjects: { grade = [], staticData = {} },
+      } = this.props;
+      const { subjectProductList = [], yearList = [], termMap ={} } = staticData
+       id = subjectProductList[0].id
+       let gradeList =  grade.map(function (item) {
+        return item['id']; 
+      })
+      dispatch({
+        type: 'listSearchProjects/fetch',
+        payload: {
+          id: id,
+          // gradeList:gradeList.toString(),
+          // termList: Object.keys(termMap).toString(),
+          // yearList: yearList.toString(),
+          pageNo: 1,
+          pageSize: 12
+        },
+      });
+    })
+  }
+
+  onChange = page => {
+    console.log(page);
+    this.setState({
+      current: page,
+    });
+  };
+  delete = (id) => {
+    const {dispatch} = this.props
+    confirm({
+      title: '确定删除改模版吗',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        dispatch({
+          type: 'listSearchProjects/deleteT',
+          payload: {
+            id: id,
+          },
+        }).then(() => {
+          message.success('删除成功')
+        })
+      },
+      onCancel() {
+        console.log('取消删除');
+      },
+    });
+  }
+
+  toggleStatus = (id) => {
+    const {dispatch} = this.props
+
+    confirm({
+      title: '确定禁用改模版吗',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        dispatch({
+          type: 'listSearchProjects/putT',
+          payload: {
+            id: id,
+          },
+        }).then(() => {
+          message.success('操作成功')
+        })
+      },
+      onCancel() {
+        console.log('取消删除');
+      },
+    });
+  }
+  filter(props) {
+    dispatch({
+      type: 'listSearchProjects/fetch',
+      payload: {...props}
+    });
+  }
+  changeGrade(tag) {
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: 'listSearchProjects/fetch3',
+      payload: {
+        id: tag,
+      },
+    });
+    // this.filter()
+  }
+  // onValuesChange(props,values) {
+  //   // 表单项变化时请求数据
+  //   // 模拟查询表单生效
+  //   let form = {}
+  //   props.form.validateFields((err, obj) => {
+  //     if (!err) {
+  //       form = Object.assign(obj, values);
+  //     }
+  //   });
+  //   const {subjectList, gradeList, termMap, yearList, status} = form
+  //   console.log(subjectList, gradeList, termMap, yearList, status)
+  //   props.dispatch({
+  //     type: 'listSearchProjects/fetch',
+  //     payload: {
+  //       id: subjectList.toString(),
+  //       gradeList: gradeList.toString(),
+  //       termList: termMap.toString(),
+  //       yearList: yearList.toString(),
+  //       status: status.toString(),
+  //       pageNo: 1,
+  //       pageSize: 12
+  //     },
+  //   });
+  // }
+
+  render() {
+    const {
+      listSearchProjects: { list = {}, grade = [], staticData = {} },
+      loading,
+      form,
+    } = this.props;
+    const { subjectProductList = [], yearList = [], termMap ={} } = staticData
+    const defaultSubject = subjectProductList.map(function (item) {
+      return item['id']; 
+    })
+
+    const { getFieldDecorator } = form;
+    const cardList = list.list ? (
+      <List
+        rowKey="id"
+        loading={loading}
+        grid={{
+          gutter: 24,
+          xl: 4,
+          lg: 3,
+          md: 3,
+          sm: 2,
+          xs: 1,
         }}
-      >
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://pro.ant.design/docs/available-script#npm-run-fetchblocks"
-        >
-          <FormattedMessage id="app.welcome.link.fetch-blocks" defaultMessage="获取全部区块" />
-        </a>
-      </Typography.Text>
-      <CodePreview> npm run fetch:blocks</CodePreview>
-    </Card>
-    <p
-      style={{
-        textAlign: 'center',
-        marginTop: 24,
-      }}
-    >
-      Want to add more pages? Please refer to{' '}
-      <a href="https://pro.ant.design/docs/block-cn" target="_blank" rel="noopener noreferrer">
-        use block
-      </a>
-      。
-    </p>
-  </PageHeaderWrapper>
-);
+        dataSource={list.list}
+        renderItem={item => (
+          <List.Item>
+            <Card
+            className={styles.card}
+            hoverable
+            title={item.title}
+            cover={
+              <img
+                alt={item.title}
+                src={item.previewImg}
+              />
+            }
+            >
+              <Card.Meta
+                title={<span className={styles.flex}> 
+                <ConfigProvider autoInsertSpaceInButton={this.state.flag}>
+                <Button size='small' target='_blank' href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
+                <Button size='small' onClick={() => this.editTemplate(item.id)}>编辑</Button>
+                <Button size='small' disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
+                <Button size='small' disabled={item.referenced} onClick={() => this.toggleStatus}>{item.enabled? '禁用': '启用'}</Button>
+                <Button size='small' onClick={this.copy}>复制</Button></ConfigProvider></span>}
+              />
+            </Card>
+
+          </List.Item>
+        )}
+      />
+    ) : null;
+    const formItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+        },
+        sm: {
+          span: 16,
+        },
+      },
+    };
+    return (
+      <div className={styles.coverCardList}>
+        <Card bordered={false}>
+          <Form layout="inline">
+           <StandardFormRow
+              title="学科"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('subjectList', {
+                  initialValue: defaultSubject.slice(0,1)
+                })(
+                  <TagSelect hideCheckAll radioable onChange={(tag) => this.changeGrade(tag)}> 
+                  {subjectProductList.map((item, index) => (
+                    <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
+                  ))}
+                  </TagSelect>
+                )}
+              </FormItem>
+            </StandardFormRow>
+            <StandardFormRow
+              title="年级"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('gradeList', {
+                  initialValue: grade.map(function (item) {
+                    return item['id']; 
+                  })
+                })(
+                  <TagSelect>
+                    {grade.map((item, index) => (
+                    <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
+                  ))}
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+            <StandardFormRow
+              title="学期"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('termMap', {
+                  initialValue: Object.keys(termMap)
+                })(
+                  <TagSelect>
+                    {Object.keys(termMap).map((index, item) => (
+                     <TagSelect.Option value={index} key={index}>{termMap[index]}</TagSelect.Option>
+                    ))}
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+            <StandardFormRow
+              title="年份"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('yearList', {
+                  initialValue: yearList
+                })(
+                  <TagSelect>
+                    {yearList.map((item, index) => (
+                     <TagSelect.Option value={item} key={index}>{item}</TagSelect.Option>
+                    ))}
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+            <StandardFormRow
+              title="状态"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('status', {
+                  initialValue: ['0','1']
+                })(
+                  <TagSelect radioable>
+                    <TagSelect.Option value="0">启用中</TagSelect.Option>
+                    <TagSelect.Option value="1">已禁用</TagSelect.Option>
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+          </Form>
+          <Button icon="plus" shape="round"  type="primary" onClick={() => this.showModal()}>
+            新建
+          </Button>
+        </Card>
+        <CreateTemplateModal 
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          onCreate={this.handleCreate}>
+
+        </CreateTemplateModal>
+        <div className={styles.cardList}>{cardList}</div>
+        <Pagination current={list.pageNum || 1} pageSize={list.pageSize || 1} onChange={this.onChange} total={list.itemTotal || 1} hideOnSinglePage={this.state.flag} />
+      </div>
+    );
+  }
+}
+
+const WarpForm = Form.create({
+  onValuesChange(props,values) {
+    // 表单项变化时请求数据
+    // 模拟查询表单生效
+    let form = {}
+    props.form.validateFields((err, obj) => {
+      if (!err) {
+        form = Object.assign(obj, values);
+      }
+    });
+    const {subjectList, gradeList, termMap, yearList, status} = form
+    console.log(subjectList, gradeList, termMap, yearList, status)
+    let prop = {
+      id: subjectList.toString(),
+      gradeList: gradeList.toString(),
+      termList: termMap.toString(),
+      yearList: yearList.toString(),
+      pageNo: 1,
+      pageSize: 12
+    }
+    if(status.length === 1) {
+      prop.status = status.toString()
+    }
+    props.dispatch({
+      type: 'listSearchProjects/fetch',
+      payload: { ...prop }
+    });
+  }
+})(Projects);
+export default connect(({ listSearchProjects, loading }) => ({
+  listSearchProjects,
+  loading: loading.models.listSearchProjects,
+}))(WarpForm);

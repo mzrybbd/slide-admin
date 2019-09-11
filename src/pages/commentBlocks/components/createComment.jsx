@@ -20,7 +20,8 @@ export const CreateComment = Form.create({ name: 'form_in_modal' })(
   // eslint-disable-next-line
   class extends React.Component {
     state = {
-      fileList: []
+      fileList: [],
+      fileData: [],
     }
 
     beforeUpload(file) {
@@ -32,14 +33,25 @@ export const CreateComment = Form.create({ name: 'form_in_modal' })(
       if (!isLt2M) {
         message.error('Image must smaller than 10MB!');
       }
-      return isJpgOrPng && isLt2M;
+      return false;
+    }
+
+    handleChange(params) {
+      const { file, fileList } = params;
+      if(file.state === 'uploading') {
+        setTimeout(() => {
+          this.setState({
+            percent: fileList.percent
+          })
+        }, 1000)
+      }
     }
 
     render() {
       const { visible, onCancel, onCreate, form } = this.props;
-      const { getFieldDecorator } = form;
+      const { getFieldDecorator } = form; 
       const props = {
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+        action: 'https://www.baidu.com',
         onChange: this.handleChange,
         multiple: false,
       };
@@ -68,7 +80,10 @@ export const CreateComment = Form.create({ name: 'form_in_modal' })(
               </Upload>)}
           </Form.Item>
           <Form.Item label="批注填充色">
+            <div>
+              <span style={{height: '20px', width: '20px', background: 'rgb(255, 255, 255)',border: '1px solid #000',display: 'block'}}></span>
               <CompactPicker />
+            </div>
           </Form.Item>
         </Form>
       </Modal>

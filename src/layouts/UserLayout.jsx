@@ -47,7 +47,6 @@ const UserLayout = props => {
           </div>
           {children}
         </div>
-        <DefaultFooter />
       </div>
     </DocumentTitle>
   );

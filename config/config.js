@@ -84,51 +84,34 @@ export default {
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
-      path: '/user',
-      component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
-    {
       path: '/',
-      component: '../layouts/SecurityLayout',
+      component: '../layouts/BasicLayout',
       routes: [
         {
           path: '/',
-          component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
-          routes: [
-            {
-              path: '/',
-              redirect: '/courseTemplate',
-            },
-            {
-              path: '/courseTemplate',
-              name: 'courseTemplate',
-              icon: 'profile',
-              component: './courseTemplate',
-            },
-            {
-              path: '/contentTemplate',
-              name: 'contentTemplate',
-              icon: 'project',
-              component: './contentTemplate',
-            },
-            {
-              path: '/commentBlocks',
-              name: 'commentBlocks',
-              icon: 'edit',
-              component: './commentBlocks',
-            },
-            {
-              component: './404',
-            },
-          ],
+          redirect: '/courseTemplate',
+        },
+        {
+          path: '/courseTemplate',
+          name: 'courseTemplate',
+          icon: 'profile',
+          component: './courseTemplate',
+        },
+        {
+          path: '/courseTemplate/:id',
+          component: './courseTemplate/components/Editor',
+        },
+        {
+          path: '/contentTemplate',
+          name: 'contentTemplate',
+          icon: 'project',
+          component: './contentTemplate',
+        },
+        {
+          path: '/commentBlocks',
+          name: 'commentBlocks',
+          icon: 'edit',
+          component: './commentBlocks',
         },
         {
           component: './404',
@@ -181,13 +164,21 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  /*
   proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
+    '/api/': {
+      target: 'http://10.10.4.65/structureTempApi/toolbarInfo/subjectProducts/',
       changeOrigin: true,
-      pathRewrite: { '^/server': '' },
+      pathRewrite: { '^/api': '' },
     },
+    '/list': {
+      target: 'http://10.10.4.65/structureTempApi/structureTemps/',
+      changeOrigin: true,
+      pathRewrite: { '^/list': '' },
+    },
+    '/put': {
+      target: 'http://10.10.4.65/structureTempEditor/structureTemps/',
+      changeOrigin: true,
+      pathRewrite: { '^/put': '' },
+    }
   },
-  */
 };

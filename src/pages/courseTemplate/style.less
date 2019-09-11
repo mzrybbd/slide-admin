@@ -1,0 +1,95 @@
+@import './utils/utils.less';
+
+.avatar-uploader {
+  .ant-upload {
+    width: 160px;
+    height: 90px;
+  }
+} 
+
+.coverCardList {
+  margin-bottom: -24px;
+
+  .card {
+    .flex {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: row;
+    }
+    :global {
+      .ant-card-meta-title {
+        margin-bottom: 4px;
+        & > a {
+          display: block;
+          max-width: 100%;
+          color: blue;
+        }
+      }
+      .ant-card-cover:after {
+        padding-top:56.25%;
+        content:"";
+        display:block;
+      }
+      .ant-card-head-title {
+        text-align: center;
+      }
+      .ant-card-cover{
+        position:relative;
+        overflow:hidden;
+        // margin:20px;
+        img{
+          position: absolute;
+          height: 100%;
+          top: 50%;
+          left: 50%;
+          -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%,-50%);
+          max-width: 100%;
+          margin: auto;
+        }
+      }
+      .ant-card-meta-description {
+        height: 44px;
+        overflow: hidden;
+        line-height: 22px;
+      }
+      .ant-card-body {
+        padding: 16px 2px;
+      }
+    }
+
+    &:hover {
+      :global {
+        .ant-card-meta-title > a {
+          color: blue;
+        }
+      }
+    }
+  }
+
+  .cardItemContent {
+    display: flex;
+    height: 20px;
+    margin-top: 16px;
+    margin-bottom: -4px;
+    line-height: 20px;
+    & > span {
+      flex: 1;
+      color: blue;
+      font-size: 12px;
+    }
+    .avatarList {
+      flex: 0 1 auto;
+    }
+  }
+  .cardList {
+    margin-top: 24px;
+  }
+
+  :global {
+    .ant-list .ant-list-item-content-single {
+      max-width: 100%;
+    }
+  }
+}

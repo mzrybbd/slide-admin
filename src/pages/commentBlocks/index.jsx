@@ -84,10 +84,6 @@ export default class TableList extends Component {
     this.setState({ visible: true });
   };
 
-  handleCancel = () => {
-    this.setState({ visible: false });
-  };
-
   handleCreate = () => {
     const { form } = this.formRef.props;
     form.validateFields((err, values) => {
