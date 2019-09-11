@@ -2,26 +2,57 @@ import { Card, Col, Form, List, Row, Select, Typography, Button, Pagination, mes
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
+import router from 'umi/router';
 import StandardFormRow from './components/StandardFormRow';
 import TagSelect from './components/TagSelect';
 import CreateTemplateModal from './components/createTemplateModal.jsx'
 import styles from './style.less';
+
 const { Option } = Select;
 const FormItem = Form.Item;
 const { Paragraph } = Typography;
 const { confirm } = Modal;
-import router from 'umi/router';
+let pageNo = 1;
+
+const getData = (props, values) => {
+  // 表单项变化时请求数据
+     // 模拟查询表单生效
+     let form = {}
+     props.form.validateFields((err, obj) => {
+       if (!err) {
+         form = Object.assign(obj, values);
+       }
+     });
+     const { subjectList, gradeList, termMap, yearList, status } = form
+     console.log(subjectList, gradeList, termMap, yearList, status)
+     const prop = {
+       id: subjectList.toString(),
+       gradeList: gradeList.toString(),
+       termList: termMap.toString(),
+       yearList: yearList.toString(),
+       pageNo,
+       pageSize: 12,
+     }
+     if (status.length === 1) {
+       prop.status = status.toString()
+     }
+     props.dispatch({
+       type: 'listSearchProjects/fetch',
+       payload: { ...prop },
+     });
+ }
 
 class Projects extends Component {
-  state = { 
+  state = {
     visible: false,
     flag: false,
     current: 1,
     flag: true,
-    num: 12
+    num: 12,
   };
-  editTemplate = (id) => {
-    router.push('/courseTemplate/' + id);
+
+  editTemplate = id => {
+    router.push(`/courseTemplate/${id}`);
   }
 
   showModal = () => {
@@ -31,7 +62,7 @@ class Projects extends Component {
   };
 
   handleCreate = e => {
-    console.log(this.formRef.getItemsValue()); 
+    console.log(this.formRef.getItemsValue());
     this.setState({
       visible: false,
     });
@@ -42,57 +73,57 @@ class Projects extends Component {
     this.setState({
       visible: false,
     });
-  }; 
+  };
 
   componentDidMount() {
     const { dispatch } = this.props;
     let id = 1
-    
+
     dispatch({
       type: 'listSearchProjects/fetch2',
     }).then(() => {
       const {
        listSearchProjects: { staticData = {} },
      } = this.props;
-     const { subjectProductList = []} = staticData
+     const { subjectProductList = [] } = staticData
       id = subjectProductList[0].id
       dispatch({
         type: 'listSearchProjects/fetch3',
         payload: {
-          id: id,
+          id,
         },
       })
     }).then(() => {
       const {
         listSearchProjects: { grade = [], staticData = {} },
       } = this.props;
-      const { subjectProductList = [], yearList = [], termMap ={} } = staticData
+      const { subjectProductList = [], yearList = [], termMap = {} } = staticData
        id = subjectProductList[0].id
-       let gradeList =  grade.map(function (item) {
-        return item['id']; 
-      })
+       const gradeList = grade.map(item => item.id)
       dispatch({
         type: 'listSearchProjects/fetch',
         payload: {
-          id: id,
+          id,
           // gradeList:gradeList.toString(),
           // termList: Object.keys(termMap).toString(),
           // yearList: yearList.toString(),
           pageNo: 1,
-          pageSize: 12
+          pageSize: 12,
         },
       });
     })
   }
 
   onChange = page => {
-    console.log(page);
+    pageNo = page
+    getData(this.props, this.props.form.getFieldsValue())
     this.setState({
       current: page,
     });
   };
-  delete = (id) => {
-    const {dispatch} = this.props
+
+  delete = id => {
+    const { dispatch } = this.props
     confirm({
       title: '确定删除改模版吗',
       okText: '确定',
@@ -102,7 +133,7 @@ class Projects extends Component {
         dispatch({
           type: 'listSearchProjects/deleteT',
           payload: {
-            id: id,
+            id,
           },
         }).then(() => {
           message.success('删除成功')
@@ -114,8 +145,8 @@ class Projects extends Component {
     });
   }
 
-  toggleStatus = (id) => {
-    const {dispatch} = this.props
+  toggleStatus = id => {
+    const { dispatch } = this.props
 
     confirm({
       title: '确定禁用改模版吗',
@@ -126,7 +157,7 @@ class Projects extends Component {
         dispatch({
           type: 'listSearchProjects/putT',
           payload: {
-            id: id,
+            id,
           },
         }).then(() => {
           message.success('操作成功')
@@ -137,12 +168,14 @@ class Projects extends Component {
       },
     });
   }
+
   filter(props) {
     dispatch({
       type: 'listSearchProjects/fetch',
-      payload: {...props}
+      payload: { ...props },
     });
   }
+
   changeGrade(tag) {
     const { dispatch } = this.props;
 
@@ -154,30 +187,6 @@ class Projects extends Component {
     });
     // this.filter()
   }
-  // onValuesChange(props,values) {
-  //   // 表单项变化时请求数据
-  //   // 模拟查询表单生效
-  //   let form = {}
-  //   props.form.validateFields((err, obj) => {
-  //     if (!err) {
-  //       form = Object.assign(obj, values);
-  //     }
-  //   });
-  //   const {subjectList, gradeList, termMap, yearList, status} = form
-  //   console.log(subjectList, gradeList, termMap, yearList, status)
-  //   props.dispatch({
-  //     type: 'listSearchProjects/fetch',
-  //     payload: {
-  //       id: subjectList.toString(),
-  //       gradeList: gradeList.toString(),
-  //       termList: termMap.toString(),
-  //       yearList: yearList.toString(),
-  //       status: status.toString(),
-  //       pageNo: 1,
-  //       pageSize: 12
-  //     },
-  //   });
-  // }
 
   render() {
     const {
@@ -185,10 +194,8 @@ class Projects extends Component {
       loading,
       form,
     } = this.props;
-    const { subjectProductList = [], yearList = [], termMap ={} } = staticData
-    const defaultSubject = subjectProductList.map(function (item) {
-      return item['id']; 
-    })
+    const { subjectProductList = [], yearList = [], termMap = {} } = staticData
+    const defaultSubject = subjectProductList.map(item => item.id)
 
     const { getFieldDecorator } = form;
     const cardList = list.list ? (
@@ -218,13 +225,13 @@ class Projects extends Component {
             }
             >
               <Card.Meta
-                title={<span className={styles.flex}> 
+                title={<span className={styles.flex}>
                 <ConfigProvider autoInsertSpaceInButton={this.state.flag}>
-                <Button size='small' target='_blank' href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
-                <Button size='small' onClick={() => this.editTemplate(item.id)}>编辑</Button>
-                <Button size='small' disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
-                <Button size='small' disabled={item.referenced} onClick={() => this.toggleStatus}>{item.enabled? '禁用': '启用'}</Button>
-                <Button size='small' onClick={this.copy}>复制</Button></ConfigProvider></span>}
+                <Button size="small" target="_blank" href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
+                <Button size="small" onClick={() => this.editTemplate(item.id)}>编辑</Button>
+                <Button size="small" disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
+                <Button size="small" disabled={item.referenced} onClick={() => this.toggleStatus}>{item.enabled ? '禁用' : '启用'}</Button>
+                <Button size="small" onClick={this.copy}>复制</Button></ConfigProvider></span>}
               />
             </Card>
 
@@ -255,13 +262,13 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('subjectList', {
-                  initialValue: defaultSubject.slice(0,1)
+                  initialValue: defaultSubject.slice(0, 1),
                 })(
-                  <TagSelect hideCheckAll radioable onChange={(tag) => this.changeGrade(tag)}> 
+                  <TagSelect hideCheckAll radioable onChange={tag => this.changeGrade(tag)}>
                   {subjectProductList.map((item, index) => (
                     <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
                   ))}
-                  </TagSelect>
+                  </TagSelect>,
                 )}
               </FormItem>
             </StandardFormRow>
@@ -274,9 +281,7 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('gradeList', {
-                  initialValue: grade.map(function (item) {
-                    return item['id']; 
-                  })
+                  initialValue: grade.map(item => item.id),
                 })(
                   <TagSelect>
                     {grade.map((item, index) => (
@@ -295,7 +300,7 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('termMap', {
-                  initialValue: Object.keys(termMap)
+                  initialValue: Object.keys(termMap),
                 })(
                   <TagSelect>
                     {Object.keys(termMap).map((index, item) => (
@@ -314,7 +319,7 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('yearList', {
-                  initialValue: yearList
+                  initialValue: yearList,
                 })(
                   <TagSelect>
                     {yearList.map((item, index) => (
@@ -333,7 +338,7 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('status', {
-                  initialValue: ['0','1']
+                  initialValue: ['0', '1'],
                 })(
                   <TagSelect radioable>
                     <TagSelect.Option value="0">启用中</TagSelect.Option>
@@ -343,11 +348,11 @@ class Projects extends Component {
               </FormItem>
             </StandardFormRow>
           </Form>
-          <Button icon="plus" shape="round"  type="primary" onClick={() => this.showModal()}>
+          <Button icon="plus" shape="round" type="primary" onClick={() => this.showModal()}>
             新建
           </Button>
         </Card>
-        <CreateTemplateModal 
+        <CreateTemplateModal
           visible={this.state.visible}
           onCancel={this.handleCancel}
           onCreate={this.handleCreate}>
@@ -361,33 +366,9 @@ class Projects extends Component {
 }
 
 const WarpForm = Form.create({
-  onValuesChange(props,values) {
-    // 表单项变化时请求数据
-    // 模拟查询表单生效
-    let form = {}
-    props.form.validateFields((err, obj) => {
-      if (!err) {
-        form = Object.assign(obj, values);
-      }
-    });
-    const {subjectList, gradeList, termMap, yearList, status} = form
-    console.log(subjectList, gradeList, termMap, yearList, status)
-    let prop = {
-      id: subjectList.toString(),
-      gradeList: gradeList.toString(),
-      termList: termMap.toString(),
-      yearList: yearList.toString(),
-      pageNo: 1,
-      pageSize: 12
-    }
-    if(status.length === 1) {
-      prop.status = status.toString()
-    }
-    props.dispatch({
-      type: 'listSearchProjects/fetch',
-      payload: { ...prop }
-    });
-  }
+  onValuesChange(props, values) {
+    getData(props, values)
+  },
 })(Projects);
 export default connect(({ listSearchProjects, loading }) => ({
   listSearchProjects,
