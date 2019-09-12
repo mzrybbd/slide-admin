@@ -103,7 +103,7 @@ class Projects extends Component {
         type: 'listSearchProjects/fetch',
         payload: {
           id,
-          gradeList:gradeList.toString(),
+          gradeList: gradeList.toString(),
           termList: Object.keys(termMap).toString(),
           yearList: yearList.toString(),
           pageNo: 1,
@@ -142,18 +142,18 @@ class Projects extends Component {
     });
   }
 
-  copy = (id) => {
-    const {dispatch} = this.props
+  copy = id => {
+    const { dispatch } = this.props
     dispatch({
       type: 'listSearchProjects/copyT',
       payload: {
-        id: id,
+        id,
       },
     })
-  }  
+  }
 
   toggleStatus = (id, status) => {
-    const {dispatch} = this.props
+    const { dispatch } = this.props
     console.log(status)
     confirm({
       title: '确定禁用改模版吗',
@@ -164,8 +164,8 @@ class Projects extends Component {
         dispatch({
           type: 'listSearchProjects/putS',
           payload: {
-            id: id,
-            status: status ? 0 : 1
+            id,
+            status: status ? 0 : 1,
           },
         })
       },
@@ -182,16 +182,16 @@ class Projects extends Component {
     });
   }
 
-  changeGrade(tag) {
-    const { dispatch } = this.props;
+  async changeGrade(tag) {
+    const { dispatch, form } = this.props;
 
-    dispatch({
+    await dispatch({
       type: 'listSearchProjects/fetch33',
       payload: {
         id: tag,
       },
     });
-    // this.filter()
+    form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade3.map(item => item.id) })
   }
 
   render() {
@@ -279,7 +279,7 @@ class Projects extends Component {
               </FormItem>
             </StandardFormRow>
             <StandardFormRow
-              title="年级"
+              title="年级333"
               block
               style={{
                 paddingBottom: 11,
