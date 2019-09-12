@@ -24,7 +24,6 @@ const getData = (props, values) => {
        }
      });
      const { subjectList, gradeList, termMap, yearList, status } = form
-     console.log(subjectList, gradeList, termMap, yearList, status)
      const prop = {
        id: subjectList.toString(),
        gradeList: gradeList.toString(),
@@ -88,25 +87,25 @@ class Projects extends Component {
      const { subjectProductList = [] } = staticData
       id = subjectProductList[0].id
       dispatch({
-        type: 'listSearchProjects/fetch3',
+        type: 'listSearchProjects/fetch33',
         payload: {
           id,
         },
       })
     }).then(() => {
       const {
-        listSearchProjects: { grade = [], staticData = {} },
+        listSearchProjects: { grade3 = [], staticData = {} },
       } = this.props;
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
        id = subjectProductList[0].id
-       const gradeList = grade.map(item => item.id)
+       const gradeList = grade3.map(item => item.id)
       dispatch({
         type: 'listSearchProjects/fetch',
         payload: {
           id,
-          // gradeList:gradeList.toString(),
-          // termList: Object.keys(termMap).toString(),
-          // yearList: yearList.toString(),
+          gradeList:gradeList.toString(),
+          termList: Object.keys(termMap).toString(),
+          yearList: yearList.toString(),
           pageNo: 1,
           pageSize: 12,
         },
@@ -135,8 +134,6 @@ class Projects extends Component {
           payload: {
             id,
           },
-        }).then(() => {
-          message.success('删除成功')
         })
       },
       onCancel() {
@@ -145,9 +142,19 @@ class Projects extends Component {
     });
   }
 
-  toggleStatus = id => {
-    const { dispatch } = this.props
+  copy = (id) => {
+    const {dispatch} = this.props
+    dispatch({
+      type: 'listSearchProjects/copyT',
+      payload: {
+        id: id,
+      },
+    })
+  }  
 
+  toggleStatus = (id, status) => {
+    const {dispatch} = this.props
+    console.log(status)
     confirm({
       title: '确定禁用改模版吗',
       okText: '确定',
@@ -155,12 +162,11 @@ class Projects extends Component {
       cancelText: '取消',
       onOk() {
         dispatch({
-          type: 'listSearchProjects/putT',
+          type: 'listSearchProjects/putS',
           payload: {
-            id,
+            id: id,
+            status: status ? 0 : 1
           },
-        }).then(() => {
-          message.success('操作成功')
         })
       },
       onCancel() {
@@ -180,7 +186,7 @@ class Projects extends Component {
     const { dispatch } = this.props;
 
     dispatch({
-      type: 'listSearchProjects/fetch3',
+      type: 'listSearchProjects/fetch33',
       payload: {
         id: tag,
       },
@@ -190,13 +196,13 @@ class Projects extends Component {
 
   render() {
     const {
-      listSearchProjects: { list = {}, grade = [], staticData = {} },
+      listSearchProjects: { list = {}, grade3 = [], staticData = {} },
       loading,
       form,
     } = this.props;
     const { subjectProductList = [], yearList = [], termMap = {} } = staticData
     const defaultSubject = subjectProductList.map(item => item.id)
-
+    console.log(list)
     const { getFieldDecorator } = form;
     const cardList = list.list ? (
       <List
@@ -230,8 +236,8 @@ class Projects extends Component {
                 <Button size="small" target="_blank" href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
                 <Button size="small" onClick={() => this.editTemplate(item.id)}>编辑</Button>
                 <Button size="small" disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
-                <Button size="small" disabled={item.referenced} onClick={() => this.toggleStatus}>{item.enabled ? '禁用' : '启用'}</Button>
-                <Button size="small" onClick={this.copy}>复制</Button></ConfigProvider></span>}
+                <Button size="small" disabled={item.referenced} onClick={() => this.toggleStatus(item.id, item.enabled)}>{item.enabled ? '禁用' : '启用'}</Button>
+                <Button size="small" onClick={() => this.copy(item.id)}>复制</Button></ConfigProvider></span>}
               />
             </Card>
 
@@ -281,10 +287,10 @@ class Projects extends Component {
             >
               <FormItem>
                 {getFieldDecorator('gradeList', {
-                  initialValue: grade.map(item => item.id),
+                  initialValue: grade3.map(item => item.id),
                 })(
                   <TagSelect>
-                    {grade.map((item, index) => (
+                    {grade3.map((item, index) => (
                     <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
                   ))}
                   </TagSelect>,
@@ -341,8 +347,8 @@ class Projects extends Component {
                   initialValue: ['0', '1'],
                 })(
                   <TagSelect radioable>
-                    <TagSelect.Option value="0">启用中</TagSelect.Option>
-                    <TagSelect.Option value="1">已禁用</TagSelect.Option>
+                    <TagSelect.Option value="1">启用中</TagSelect.Option>
+                    <TagSelect.Option value="0">已禁用</TagSelect.Option>
                   </TagSelect>,
                 )}
               </FormItem>

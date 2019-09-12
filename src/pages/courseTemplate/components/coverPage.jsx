@@ -1,6 +1,5 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import './index.less';
 import { Upload, Icon, message } from 'antd';
 
 function getBase64(img, callback) {
@@ -18,7 +17,7 @@ function beforeUpload(file) {
   if (!isLt2M) {
     message.error('封面图必须小于10MB!');
   }
-  return isJpgOrPng && isLt2M;
+  return true;
 }
 
 class CoverPage extends React.Component {
@@ -57,7 +56,7 @@ class CoverPage extends React.Component {
         listType="picture-card"
         className="avatar-uploader"
         showUploadList={false}
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        action=""
         beforeUpload={beforeUpload}
         onChange={this.handleChange}
       >

@@ -31,57 +31,56 @@ class extends React.Component {
       if (!err) {
         form = values
       }
-    });
     let formData = new FormData()
     console.log(form)
-    // form.file.fileList.forEach((file) => {
-    //   formData.append('file', file)
-    // })
+    form.file.forEach((file) => {
+      formData.append('file', file)
+    })
     formData.append('id', 43)
-    formData.append('file', form.file)
+    // formData.append('file', form.file)
     formData.append('title', form.title)
     formData.append('gradeList', form.gradeList.toString())
     formData.append('yearList', form.yearList.toString())
     formData.append('termList', form.gradeList.toString())
-    formData.append('inverted', 1)
+    formData.append('inverted', !!form.gradeList.inverted)
+    if(form.deckUuid){
+      formData.append('deckUuid', form.deckUuid)
+    }
     formData.append('subjectProductId', form.subjectProductId.toString())
-    formData.append('skin', form.skin)
-    formData.append('style', form.style)
+    formData.append('skin', form.skin || '')
+    formData.append('style', form.style || '')
     console.log(formData)
     this.props.dispatch({
       type:'listSearchProjects/putT',
       payload:formData,
     })
+    });
+    
   };
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'listSearchProjects/fetch',
-      payload: {
-        gradeList: '3,4',
-        termList: '2,3,4',
-        yearList: '2019,2020',
-        status: 1,
-        pageNo: 1,
-        pageSize: 2
-      },
-    });
+    const { dispatch, formList } = this.props;
+    console.log('llllll',formList.subjectProductId)
     dispatch({
       type: 'listSearchProjects/fetch2',
-    });
-    dispatch({
-      type: 'listSearchProjects/fetch3',
-      payload: {
-        id: 104,
-      },
-    });
+    }).then(() => {
+      const {
+       listSearchProjects: { staticData = {} },
+     } = this.props;
+     const { subjectProductList = [] } = staticData
+      dispatch({
+        type: 'listSearchProjects/fetch31',
+        payload: {
+          id: formList.subjectProductId,
+        },
+      })
+    })
   }
 
   changeGradeList(tag) {
     const { dispatch } = this.props;
 
     dispatch({
-      type: 'listSearchProjects/fetch3',
+      type: 'listSearchProjects/fetch31',
       payload: {
         id: tag,
       },
@@ -91,7 +90,7 @@ class extends React.Component {
       const { form, reference, formList, onUpdate} = this.props;
       const { getFieldDecorator } = form;
       const {
-        listSearchProjects: { list = {}, grade = [], staticData = {} },
+        listSearchProjects: { list = {}, grade1 = [], staticData = {} },
         loading,
         visible, 
         onCancel, 
@@ -99,8 +98,6 @@ class extends React.Component {
       } = this.props;
 
       const { subjectProductList = [], yearList = [], termMap ={} } = staticData
-
-      console.log('===', formList.themeTermBoList, termMap)
 
       const formItemLayout = {
         labelCol: {
@@ -114,9 +111,8 @@ class extends React.Component {
         },
       };
       const props = {
-        action: 'https://www.baidu.com',
+        action: '',
         onChange: this.handleChange,
-        multiple: false,
       };
       const submitFormLayout = {
         wrapperCol: {
@@ -124,12 +120,13 @@ class extends React.Component {
           sm: { span: 10, offset: 8 },
         },
       };
-      let id = formList.subjectProductList
-      console.log(id)
+      let id = formList.subjectProductId
+      console.log('hhh', formList,id)
       return (
         <Form {...formItemLayout} >
           {!reference && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId', {
+              rules: [{ required: true, message: '请选择学科' }],
               rules: [{ required: true, message: '请选择学科' }],
               initialValue: [].concat(formList.subjectProductId)
             })(
@@ -142,7 +139,7 @@ class extends React.Component {
           </Form.Item>)}
           {reference && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId')(
-             <span className="ant-form-text">{subjectProductList[id]}</span>
+             <span className="ant-form-text">jj </span>
             )}
           </Form.Item>)}
           <Form.Item label="年级">
@@ -151,7 +148,7 @@ class extends React.Component {
               initialValue: formList.themeGradeBoList
             })(
               <Checkbox.Group>
-              {grade.map((item, index) => (
+              {grade1.map((item, index) => (
                   <Checkbox value={item.id} key={index}>{item.name}</Checkbox>
                 ))}
             </Checkbox.Group>
@@ -190,7 +187,7 @@ class extends React.Component {
             })(<Input placeholder="请输入课程模版名称" />)}
           </Form.Item>
           {reference && (<Form.Item label="DIY预览讲次UUID">
-            {getFieldDecorator('UUID', {
+            {getFieldDecorator('deckUuid', {
                rules: [{ required: true, message: '请输入UUID' }],
                initialValue: formList.deckUuid
             })(<Input placeholder="请输入讲次UUID" />)}
@@ -203,8 +200,8 @@ class extends React.Component {
               initialValue: formList.skin
             })(
                 <TextArea
-                autosize={{ minRows: 2}} 
-                readOnly
+                rows= {2}
+                disabled
                 />,
               )}
           </Form.Item>
@@ -213,8 +210,8 @@ class extends React.Component {
               initialValue: formList.style
             })(
                 <TextArea
-                  autosize={{ minRows: 2 }} 
-                  row={ 2 }readOnly
+                rows={2}
+                disabled
                 />,
               )}
           </Form.Item>
@@ -223,7 +220,7 @@ class extends React.Component {
             // valuePropName: 'fileList',
             getValueFromEvent: this.normFile,
           })(
-            <CoverPage></CoverPage>
+            <CoverPage ></CoverPage>
           )}
         </Form.Item>
         <Form.Item {...submitFormLayout}> 

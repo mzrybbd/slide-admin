@@ -24,24 +24,25 @@ class CreateTemplateModal extends React.Component {
       if(!err){
         form = values;
       }
+      let formData = new FormData()
+      console.log(form)
+      // form.file.fileList.forEach((file) => {
+      //   formData.append('file', file)
+      // })
+      // formData.append('file', form.file)
+      formData.append('title', form.title)
+      formData.append('gradeList', form.gradeList.toString())
+      formData.append('yearList', form.yearList.toString())
+      formData.append('termList', form.termList.toString())
+      formData.append('inverted', 1)
+      formData.append('subjectProductId', form.subjectProductId.toString())
+      console.log(formData)
+      this.props.dispatch({
+        type:'listSearchProjects/createT',
+        payload:formData,
+      })
     });
-    let formData = new FormData()
-    console.log(form)
-    // form.file.fileList.forEach((file) => {
-    //   formData.append('file', file)
-    // })
-    // formData.append('file', form.file)
-    formData.append('title', form.title)
-    formData.append('gradeList', form.gradeList.toString())
-    formData.append('yearList', form.yearList.toString())
-    formData.append('termList', form.termList.toString())
-    formData.append('inverted', 1)
-    formData.append('subjectProductId', form.subjectProductId.toString())
-    console.log(formData)
-    this.props.dispatch({
-      type:'listSearchProjects/createT',
-      payload:formData,
-    })
+    
   }
 
   render() {

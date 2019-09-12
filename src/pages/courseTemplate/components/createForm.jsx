@@ -39,12 +39,11 @@ class extends React.Component {
     const { dispatch } = this.props;
 
     dispatch({
-      type: 'listSearchProjects/fetch3',
+      type: 'listSearchProjects/fetch32',
       payload: {
         id: tag,
       },
     });
-    // this.filter()
   }
   componentDidMount() {
     const { dispatch } = this.props;
@@ -59,7 +58,7 @@ class extends React.Component {
      const { subjectProductList = []} = staticData
       id = subjectProductList[0].id
       dispatch({
-        type: 'listSearchProjects/fetch3',
+        type: 'listSearchProjects/fetch32',
         payload: {
           id: id,
         },
@@ -82,7 +81,7 @@ class extends React.Component {
         },
       };
       const {
-        listSearchProjects: { list = {}, grade = [], staticData = {} },
+        listSearchProjects: { list = {}, grade2 = [], staticData = {} },
         loading,
         visible, 
         onCancel, 
@@ -90,7 +89,6 @@ class extends React.Component {
         form
       } = this.props;
       const { getFieldDecorator } = form;
-
       const { subjectProductList = [], yearList = [], termMap ={} } = staticData
       const defaultSubject = subjectProductList.map(function (item) {
         return item['id']; 
@@ -141,12 +139,12 @@ class extends React.Component {
           <Form.Item label="年级">
             {getFieldDecorator('gradeList', {
               rules: [{ required: true, message: '请选择年级' }],
-              initialValue: grade.map(function (item) {
+              initialValue: grade2.map(function (item) {
                 return item['id']; 
               })
             })(
               <Checkbox.Group>
-                {grade.map((item, index) => (
+                {grade2.map((item, index) => (
                     <Checkbox value={item.id} key={index}>{item.name}</Checkbox>
                   ))}
               </Checkbox.Group>

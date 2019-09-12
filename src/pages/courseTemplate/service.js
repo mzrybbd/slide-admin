@@ -3,9 +3,8 @@ import request from '@/utils/request';
 export async function queryList(params) {
   let realParams = Object.assign({},params)
   delete realParams.id
-  console.log(realParams, params)
   return request('/list/subjectProduct/'+params.id, {
-    params,
+    params: realParams,
   });
 }
 //获取学科
@@ -24,7 +23,7 @@ export async function deleteTemplate(params) {
 }
 //更新模版
 export async function putTemplate(params) {
-  return request('/list/1',{
+  return request('/list/54359',{
     method: 'PUT',
     data: params
   });
@@ -35,12 +34,8 @@ export async function queryTempalte(params) {
 }
 //复制模版
 export async function copyTemplate(params) {
-  return request('/list/'+ params.id + '/copy',{
-    method: 'POST',
-    data: params,
-    // headers: {
-    //   'Content-Type': 'application/json;charset=utf-8',
-    // }
+  return request('/copy/'+ params.id + '/copy',{
+    method: 'POST'
   });
 }
 //更新具体的状态

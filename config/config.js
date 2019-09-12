@@ -170,6 +170,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },
+    '/copy': {
+      target: 'http://10.10.4.209/structureTempApi/structureTemps',
+      changeOrigin: true,
+      pathRewrite: { '^/copy': '' },
+    },
     '/list': {
       target: 'http://10.10.4.65/structureTempApi/structureTemps/',
       changeOrigin: true,

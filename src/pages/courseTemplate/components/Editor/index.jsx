@@ -50,10 +50,7 @@ export default class EditTemplate extends React.Component {
         type: record.type,
         status: (record.status) ? 0 : 1
       },
-    }).then(() => {
-      let msg = record.status ? '禁用成功' : '启用成功'
-      message.success(msg)
-    });
+    })
   }
   updateTemplate() {
     let demo=this.refs.getFormValue;
@@ -91,7 +88,7 @@ export default class EditTemplate extends React.Component {
       payload: {
         id: this.props.match.params.id
       },
-    });
+    }).then();
   }
   backList = () => {
     router.push('/courseTemplate')
@@ -99,7 +96,7 @@ export default class EditTemplate extends React.Component {
   render() {
     const { visible, onCancel, onCreate, form, listSearchProjects: { edit = {} }, } = this.props;
     console.log( edit)
-    const { templateVoList,referenced } = edit
+    const { templateVoList,referenced, subjectProductId } = edit
 
     return (
       <div>
@@ -112,7 +109,7 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        <UpdateFrom ref="getFormValue" onUpdate={this.updateTemplate} reference={referenced} formList={edit}></UpdateFrom>
+        <UpdateFrom ref="getFormValue" id={subjectProductId} onUpdate={this.updateTemplate} reference={referenced} formList={edit}></UpdateFrom>
         <h2>模版课件页</h2>
         <Table
           dataSource={ templateVoList }
