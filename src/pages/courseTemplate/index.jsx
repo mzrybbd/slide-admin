@@ -66,7 +66,7 @@ class Projects extends Component {
     });
   };
 
-  handleCancel = e => {
+  handleCancel = () => {
     this.setState({
       visible: false,
     });

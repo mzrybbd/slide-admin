@@ -94,7 +94,7 @@ const Model = {
           payload: response
         });
         message.success('创建成功')
-        router.push('/courseTemplate/'+response.body)
+        // router.push('/courseTemplate/'+response.body)
       }else if(response.errorCode === 100002) {
         message.warning('课程模板名称已存在')
       }

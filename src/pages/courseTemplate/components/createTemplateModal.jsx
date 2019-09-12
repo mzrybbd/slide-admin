@@ -17,7 +17,7 @@ class CreateTemplateModal extends React.Component {
     });
   };
 
-  onCreate = (e) => {
+  onCreate = () => {
     let demo=this.refs.getFormValue;
     let form = {}
     demo.validateFields((err, values) => {
@@ -39,9 +39,8 @@ class CreateTemplateModal extends React.Component {
       this.props.dispatch({
         type:'listSearchProjects/createT',
         payload:formData,
-      })
-    });
-    
+      });
+    })
   }
 
   render() {

@@ -21,10 +21,21 @@ function beforeUpload(file) {
 }
 
 class CoverPage extends React.Component {
+
+  static getDerivedStateFromProps(props){
+    if (props.imageUrl){
+      return {
+        imageUrl: props.imageUrl,
+      }
+    }
+    return {}
+  };
+
   state = {
     imageUrl: this.props.imageUrl,
     loading: false,
   };
+
 
   handleChange = info => {
 
