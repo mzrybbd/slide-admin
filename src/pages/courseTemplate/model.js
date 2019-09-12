@@ -134,8 +134,8 @@ const Model = {
           payload: response.body
         });
         message.success('复制成功')
-      }else if(response.code === 510){
-        message.error('结构模板不存在')
+      }else{
+        message.error('复制失败')
       }
     },
     *putS({ payload }, { call, put }) {
@@ -161,7 +161,9 @@ const Model = {
           payload: response.body
         });
         message.success('操作成功')
-      }else{
+      }else if(response.code === 512){
+        message.error('模版元素为空，操作失败')
+      }else {
         message.error('操作失败')
       }
     },

@@ -23,7 +23,7 @@ export async function deleteTemplate(params) {
 }
 //更新模版
 export async function putTemplate(params) {
-  return request('/list/54359',{
+  return request('/list/'+ params.get('id'),{
     method: 'PUT',
     data: params
   });

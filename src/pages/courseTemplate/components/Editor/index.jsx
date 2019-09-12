@@ -51,34 +51,12 @@ export default class EditTemplate extends React.Component {
         status: (record.status) ? 0 : 1
       },
     })
-  }
-  updateTemplate() {
-    let demo=this.refs.getFormValue;
-    let form = {}
-    demo.validateFields((err, values) => {
-      if(!err){
-        form = values;
-      }
-    });
-    let formData = new FormData()
-    form.file.fileList.forEach((file) => {
-      formData.append('file', file)
-    })
-    // formData.append('file', form.file)
-    formData.append('id', 54339)
-    formData.append('title', form.title)
-    formData.append('gradeList', form.gradeList.toString())
-    formData.append('yearList', form.yearList.toString())
-    formData.append('termList', form.gradeList.toString())
-    formData.append('inverted', 1)
-    formData.append('subjectProductId', form.subjectProductId.toString())
-    formData.append('skin', form.skin || '')
-    formData.append('style', form.style || '')
-    console.log(formData)
     this.props.dispatch({
-      type:'listSearchProjects/putT',
-      payload: formData,
-    })
+      type: 'listSearchProjects/fetch4',
+      payload: {
+        id: this.props.match.params.id
+      },
+    });
   }
   componentDidMount(){
     const { dispatch } = this.props;
@@ -88,16 +66,29 @@ export default class EditTemplate extends React.Component {
       payload: {
         id: this.props.match.params.id
       },
-    }).then();
+    });
+
+    dispatch({
+      type: 'listSearchProjects/fetch2',
+    }).then(() => {
+      const {
+       listSearchProjects: { staticData = {} },
+     } = this.props;
+     const { subjectProductList = [] } = staticData
+      dispatch({
+        type: 'listSearchProjects/fetch31',
+        payload: {
+          id: this.props.listSearchProjects.edit.subjectProductId,
+        },
+      })
+    })
   }
   backList = () => {
     router.push('/courseTemplate')
   }
   render() {
     const { visible, onCancel, onCreate, form, listSearchProjects: { edit = {} }, } = this.props;
-    console.log( edit)
     const { templateVoList,referenced, subjectProductId } = edit
-
     return (
       <div>
         <Breadcrumb>
@@ -109,13 +100,12 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        <UpdateFrom ref="getFormValue" id={subjectProductId} onUpdate={this.updateTemplate} reference={referenced} formList={edit}></UpdateFrom>
+        <UpdateFrom ref="getFormValue" id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit}></UpdateFrom>
         <h2>模版课件页</h2>
         <Table
           dataSource={ templateVoList }
           pagination={false}
           columns={this.columns}
-          onChange={this.handleStandardTableChange}
           rowKey={(record, index) => index}
         />
       </div>

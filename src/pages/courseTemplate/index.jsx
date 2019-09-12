@@ -61,14 +61,12 @@ class Projects extends Component {
   };
 
   handleCreate = e => {
-    console.log(this.formRef.getItemsValue());
     this.setState({
       visible: false,
     });
   };
 
   handleCancel = e => {
-    console.log(e);
     this.setState({
       visible: false,
     });
@@ -122,6 +120,7 @@ class Projects extends Component {
   };
 
   delete = id => {
+    const props = this.props
     const { dispatch } = this.props
     confirm({
       title: '确定删除改模版吗',
@@ -135,6 +134,7 @@ class Projects extends Component {
             id,
           },
         })
+        getData(props, props.form.getFieldsValue())
       },
       onCancel() {
         console.log('取消删除');
@@ -144,19 +144,24 @@ class Projects extends Component {
 
   copy = id => {
     const { dispatch } = this.props
+    const props = this.props
+
     dispatch({
       type: 'listSearchProjects/copyT',
       payload: {
         id,
       },
     })
+    getData(props, props.form.getFieldsValue())
   }
 
   toggleStatus = (id, status) => {
     const { dispatch } = this.props
-    console.log(status)
+    const props = this.props
+
+    let msg = status ? '禁用' : '启用'
     confirm({
-      title: '确定禁用改模版吗',
+      title: `确定${msg}该模版吗`,
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
@@ -168,6 +173,7 @@ class Projects extends Component {
             status: status ? 0 : 1,
           },
         })
+        getData(props, props.form.getFieldsValue())
       },
       onCancel() {
         console.log('取消删除');
@@ -202,7 +208,6 @@ class Projects extends Component {
     } = this.props;
     const { subjectProductList = [], yearList = [], termMap = {} } = staticData
     const defaultSubject = subjectProductList.map(item => item.id)
-    console.log(list)
     const { getFieldDecorator } = form;
     const cardList = list.list ? (
       <List
@@ -279,7 +284,7 @@ class Projects extends Component {
               </FormItem>
             </StandardFormRow>
             <StandardFormRow
-              title="年级333"
+              title="年级"
               block
               style={{
                 paddingBottom: 11,

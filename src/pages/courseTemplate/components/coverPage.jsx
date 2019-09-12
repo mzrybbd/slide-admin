@@ -22,10 +22,12 @@ function beforeUpload(file) {
 
 class CoverPage extends React.Component {
   state = {
+    imageUrl: this.props.imageUrl,
     loading: false,
   };
 
   handleChange = info => {
+
     if (info.file.status === 'uploading') {
       this.setState({ loading: true });
       return;
@@ -45,7 +47,7 @@ class CoverPage extends React.Component {
     const uploadButton = (
       <div>
         <Icon type={this.state.loading ? 'loading' : 'plus'} />
-        <div className="ant-upload-text">Upload</div>
+        <div className="ant-upload-text">上传</div>
       </div>
     );
     const { imageUrl } = this.state;

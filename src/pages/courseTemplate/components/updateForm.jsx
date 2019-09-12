@@ -17,6 +17,7 @@ import { CompactPicker } from 'react-color'
 import CoverPage from './coverPage';
 const { TextArea } = Input
 import { connect } from 'dva';
+import EditTemplate from './Editor';
 @connect(({ listSearchProjects, loading }) => ({  
   listSearchProjects,
   loading: loading.models.listSearchProjects,
@@ -24,6 +25,12 @@ import { connect } from 'dva';
 export const UpdateFrom = Form.create({ name: 'update_form' })(
 
 class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: props.formList.subjectProductId
+    }
+  }
   updateTemplate = e => {
     let form = {}
     e.preventDefault();
@@ -32,24 +39,25 @@ class extends React.Component {
         form = values
       }
     let formData = new FormData()
-    console.log(form)
-    form.file.forEach((file) => {
-      formData.append('file', file)
-    })
-    formData.append('id', 43)
-    // formData.append('file', form.file)
+    console.log('====', form)
+    if(form.file){
+      form.file.forEach((file) => {
+        formData.append('file', file.originFileObj)
+      })
+    }
+    formData.append('id', this.props.url)
     formData.append('title', form.title)
     formData.append('gradeList', form.gradeList.toString())
     formData.append('yearList', form.yearList.toString())
     formData.append('termList', form.gradeList.toString())
-    formData.append('inverted', !!form.gradeList.inverted)
+    formData.append('inverted', !!form.inverted)
     if(form.deckUuid){
       formData.append('deckUuid', form.deckUuid)
     }
     formData.append('subjectProductId', form.subjectProductId.toString())
     formData.append('skin', form.skin || '')
     formData.append('style', form.style || '')
-    console.log(formData)
+    console.log('===', form)
     this.props.dispatch({
       type:'listSearchProjects/putT',
       payload:formData,
@@ -57,38 +65,22 @@ class extends React.Component {
     });
     
   };
-  componentDidMount() {
-    const { dispatch, formList } = this.props;
-    console.log('llllll',formList.subjectProductId)
-    dispatch({
-      type: 'listSearchProjects/fetch2',
-    }).then(() => {
-      const {
-       listSearchProjects: { staticData = {} },
-     } = this.props;
-     const { subjectProductList = [] } = staticData
-      dispatch({
-        type: 'listSearchProjects/fetch31',
-        payload: {
-          id: formList.subjectProductId,
-        },
-      })
-    })
-  }
 
-  changeGradeList(tag) {
-    const { dispatch } = this.props;
+    async changeGradeList(tag) {
+    const { dispatch, form } = this.props;
 
-    dispatch({
+    await dispatch({
       type: 'listSearchProjects/fetch31',
       payload: {
         id: tag,
       },
     });
+    form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade1.map(item => item.id) })
   }
     render() {
       const { form, reference, formList, onUpdate} = this.props;
       const { getFieldDecorator } = form;
+
       const {
         listSearchProjects: { list = {}, grade1 = [], staticData = {} },
         loading,
@@ -120,8 +112,6 @@ class extends React.Component {
           sm: { span: 10, offset: 8 },
         },
       };
-      let id = formList.subjectProductId
-      console.log('hhh', formList,id)
       return (
         <Form {...formItemLayout} >
           {!reference && (<Form.Item label="学科" >
@@ -182,7 +172,10 @@ class extends React.Component {
           </Form.Item>
           <Form.Item label="模版名称">
             {getFieldDecorator('title', {
-              rules: [{ required: true, message: '请输入课程模版名称' }],
+              rules: [{ required: true, message: '请输入课程模版名称' },{
+                max:100,
+                message: '名称不能超过100字符',
+              },],
               initialValue: formList.title
             })(<Input placeholder="请输入课程模版名称" />)}
           </Form.Item>
@@ -216,11 +209,8 @@ class extends React.Component {
               )}
           </Form.Item>
           <Form.Item label="模版封面页">
-          {getFieldDecorator('file', {
-            // valuePropName: 'fileList',
-            getValueFromEvent: this.normFile,
-          })(
-            <CoverPage ></CoverPage>
+          {getFieldDecorator('file')(
+            <CoverPage imageUrl={formList.previewImg }></CoverPage>
           )}
         </Form.Item>
         <Form.Item {...submitFormLayout}> 
