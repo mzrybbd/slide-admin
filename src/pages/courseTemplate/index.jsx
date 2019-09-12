@@ -142,11 +142,11 @@ class Projects extends Component {
     });
   }
 
-  copy = id => {
+  copy = async id => {
     const { dispatch } = this.props
     const props = this.props
 
-    dispatch({
+    await dispatch({
       type: 'listSearchProjects/copyT',
       payload: {
         id,

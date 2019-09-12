@@ -75,6 +75,8 @@ export default class EditTemplate extends React.Component {
        listSearchProjects: { staticData = {} },
      } = this.props;
      const { subjectProductList = [] } = staticData
+     console.log(this.props.listSearchProjects.edit.subjectProductId)
+     debugger
       dispatch({
         type: 'listSearchProjects/fetch31',
         payload: {

@@ -165,25 +165,20 @@ export default {
   },
   chainWebpack: webpackPlugin,
   proxy: {
-    '/api/': {
+    '/structureTempApi/toolbarInfo/subjectProducts': {
       target: 'http://10.10.4.65/structureTempApi/toolbarInfo/subjectProducts/',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: { '^/structureTempApi/toolbarInfo/subjectProducts': '' },
     },
-    '/copy': {
+    '/structureTempApi/structureTemps': {
       target: 'http://10.10.4.65/structureTempApi/structureTemps',
       changeOrigin: true,
-      pathRewrite: { '^/copy': '' },
+      pathRewrite: { '^/structureTempApi/structureTemps': '' },
     },
-    '/list': {
-      target: 'http://10.10.4.65/structureTempApi/structureTemps/',
-      changeOrigin: true,
-      pathRewrite: { '^/list': '' },
-    },
-    '/put': {
+    '/structureTempEditor/structureTemps': {
       target: 'http://10.10.4.65/structureTempEditor/structureTemps/',
       changeOrigin: true,
-      pathRewrite: { '^/put': '' },
+      pathRewrite: { '^/structureTempEditor/structureTemps': '' },
     }
   },
 };

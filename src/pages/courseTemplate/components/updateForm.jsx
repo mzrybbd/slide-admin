@@ -39,6 +39,8 @@ class extends React.Component {
         form = values
       }
     let formData = new FormData()
+    console.log(form)
+    debugger
     if(form.file){
       form.file.forEach((file) => {
         formData.append('file', file.originFileObj)
@@ -131,7 +133,7 @@ class extends React.Component {
               </Select>,
             )}
           </Form.Item>)}
-          {reference && (<Form.Item label="学科" >
+          {reference && value[0] && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId')(
              <span className="ant-form-text">{value[0].name}</span>
             )}
