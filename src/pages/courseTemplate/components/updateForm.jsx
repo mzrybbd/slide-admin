@@ -39,7 +39,6 @@ class extends React.Component {
         form = values
       }
     let formData = new FormData()
-    console.log('====', form)
     if(form.file){
       form.file.forEach((file) => {
         formData.append('file', file.originFileObj)
@@ -80,7 +79,6 @@ class extends React.Component {
     render() {
       const { form, reference, formList, onUpdate} = this.props;
       const { getFieldDecorator } = form;
-
       const {
         listSearchProjects: { list = {}, grade1 = [], staticData = {} },
         loading,
@@ -90,6 +88,12 @@ class extends React.Component {
       } = this.props;
 
       const { subjectProductList = [], yearList = [], termMap ={} } = staticData
+      let subjectId = [].concat(formList.subjectProductId)
+
+      let value = subjectProductList.filter((item, index) => {
+        return item.id == subjectId
+      })
+      console.log(value)
 
       const formItemLayout = {
         labelCol: {
@@ -129,10 +133,10 @@ class extends React.Component {
           </Form.Item>)}
           {reference && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId')(
-             <span className="ant-form-text">jj </span>
+             <span className="ant-form-text">{value[0].name}</span>
             )}
           </Form.Item>)}
-          <Form.Item label="年级">
+          <Form.Item label="年级" >
             {getFieldDecorator('gradeList', {
               rules: [{ required: true, message: '请选择年级' }],
               initialValue: formList.themeGradeBoList
