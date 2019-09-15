@@ -11,12 +11,6 @@ import { connect } from 'dva';
 class CreateTemplateModal extends React.Component {
   state = { visible: false };
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
   onCreate = () => {
     let demo=this.refs.getFormValue;
     let form = {}
@@ -25,7 +19,7 @@ class CreateTemplateModal extends React.Component {
         form = values;
       }
       let formData = new FormData()
-      if(form.file){
+      if(form.file) {
         form.file.fileList.forEach((fileBlob) => {
           formData.append('file', fileBlob.originFileObj)
         })
@@ -36,6 +30,7 @@ class CreateTemplateModal extends React.Component {
       formData.append('termList', form.termList.toString())
       formData.append('inverted', form.inverted ? 1 : 0)
       formData.append('subjectProductId', form.subjectProductId.toString())
+
       this.props.dispatch({
         type:'listSearchProjects/createT',
         payload:formData,
@@ -50,11 +45,10 @@ class CreateTemplateModal extends React.Component {
       <div>
         <Modal
           title="新建课程模版"
-          visible={visible}
-          onOk={this.onCreate}
-          onCancel={onCancel}
+          visible={ visible }
+          onOk={ this.onCreate }
+          onCancel={ onCancel }
           centered
-          wrapped
         >
           <CreateFrom ref="getFormValue" ></CreateFrom>
         </Modal>

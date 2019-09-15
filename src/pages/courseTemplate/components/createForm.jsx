@@ -17,10 +17,12 @@ import { CompactPicker } from 'react-color'
 import CoverPage from './coverPage';
 const { TextArea } = Input
 import { connect } from 'dva';
+
 @connect(({ listSearchProjects, loading }) => ({  
   listSearchProjects,
   loading: loading.models.listSearchProjects,
 }))
+
 export const CreateFrom = Form.create({ name: 'create_form' })(
 
 class extends React.Component {
@@ -53,7 +55,7 @@ class extends React.Component {
     let id = 1
     
     dispatch({
-      type: 'listSearchProjects/fetch2',
+      type: 'listSearchProjects/querySubjectStatic',
     }).then(() => {
       const {
        listSearchProjects: { staticData = {} },

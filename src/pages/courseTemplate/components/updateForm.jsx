@@ -40,7 +40,6 @@ class extends React.Component {
       }
     let formData = new FormData()
     console.log(form)
-    debugger
     if(form.file){
       form.file.forEach((file) => {
         formData.append('file', file.originFileObj)

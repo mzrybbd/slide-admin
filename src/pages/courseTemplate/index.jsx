@@ -1,4 +1,4 @@
-import { Card, Col, Form, List, Row, Select, Typography, Button, Pagination, message, Modal, ConfigProvider } from 'antd';
+import { Card, Form, List, Select, Typography, Button, Pagination, message, Modal, ConfigProvider } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -36,7 +36,7 @@ const getData = (props, values) => {
        prop.status = status.toString()
      }
      props.dispatch({
-       type: 'listSearchProjects/fetch',
+       type: 'listSearchProjects/queryFilterList',
        payload: { ...prop },
      });
  }
@@ -44,10 +44,8 @@ const getData = (props, values) => {
 class Projects extends Component {
   state = {
     visible: false,
-    flag: false,
     current: 1,
     flag: true,
-    num: 12,
   };
 
   editTemplate = id => {
@@ -77,7 +75,7 @@ class Projects extends Component {
     let id = 1
 
     dispatch({
-      type: 'listSearchProjects/fetch2',
+      type: 'listSearchProjects/querySubjectStatic',
     }).then(() => {
       const {
        listSearchProjects: { staticData = {} },
@@ -97,8 +95,9 @@ class Projects extends Component {
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
        id = subjectProductList[0].id
        const gradeList = grade3.map(item => item.id)
+       console.log(gradeList)
       dispatch({
-        type: 'listSearchProjects/fetch',
+        type: 'listSearchProjects/queryFilterList',
         payload: {
           id,
           gradeList: gradeList.toString(),
@@ -119,16 +118,16 @@ class Projects extends Component {
     });
   };
 
-  delete = id => {
+  delete = async id => {
     const props = this.props
     const { dispatch } = this.props
-    confirm({
+    await confirm({
       title: '确定删除改模版吗',
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
       onOk() {
-        dispatch({
+         dispatch({
           type: 'listSearchProjects/deleteT',
           payload: {
             id,
@@ -155,18 +154,18 @@ class Projects extends Component {
     getData(props, props.form.getFieldsValue())
   }
 
-  toggleStatus = (id, status) => {
+  toggleStatus = async (id, status) => {
     const { dispatch } = this.props
     const props = this.props
 
     let msg = status ? '禁用' : '启用'
-    confirm({
+    await confirm({
       title: `确定${msg}该模版吗`,
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
-      onOk() {
-        dispatch({
+       onOk() {
+         dispatch({
           type: 'listSearchProjects/putS',
           payload: {
             id,
@@ -183,7 +182,7 @@ class Projects extends Component {
 
   filter(props) {
     dispatch({
-      type: 'listSearchProjects/fetch',
+      type: 'listSearchProjects/queryFilterList',
       payload: { ...props },
     });
   }
@@ -364,13 +363,12 @@ class Projects extends Component {
           </Button>
         </Card>
         <CreateTemplateModal
-          visible={this.state.visible}
-          onCancel={this.handleCancel}
-          onCreate={this.handleCreate}>
-
+          visible={ this.state.visible }
+          onCancel={ this.handleCancel }
+          onCreate={ this.handleCreate }>
         </CreateTemplateModal>
-        <div className={styles.cardList}>{cardList}</div>
-        <Pagination current={list.pageNum || 1} pageSize={list.pageSize || 1} onChange={this.onChange} total={list.itemTotal || 1} hideOnSinglePage={this.state.flag} />
+        <div className={ styles.cardList }>{cardList}</div>
+        <Pagination current={ list.pageNum || 1 } pageSize={ list.pageSize || 1 } onChange={ this.onChange } total={ list.itemTotal || 1 } hideOnSinglePage={ this.state.flag } />
       </div>
     );
   }

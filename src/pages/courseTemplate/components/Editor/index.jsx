@@ -2,7 +2,6 @@
 import React, { Component, Fragment} from 'react';
 import 'antd/dist/antd.css';
 import { Breadcrumb, Button, Table, Divider, ConfigProvider, message } from 'antd';
-// import { TemplateFrom } from '../form';
 import { UpdateFrom } from '../updateForm';
 import { connect } from 'dva';
 import router from 'umi/router';
@@ -15,7 +14,6 @@ import router from 'umi/router';
 export default class EditTemplate extends React.Component {
   state = {
     submitting: false,
-    flag: false
   }
   columns = [
     {
@@ -42,6 +40,7 @@ export default class EditTemplate extends React.Component {
       ),
     },
   ];
+
   putStatus = (record) => {
     this.props.dispatch({
       type: 'listSearchProjects/putAnyS',
@@ -52,7 +51,7 @@ export default class EditTemplate extends React.Component {
       },
     })
     this.props.dispatch({
-      type: 'listSearchProjects/fetch4',
+      type: 'listSearchProjects/queryT',
       payload: {
         id: this.props.match.params.id
       },
@@ -62,21 +61,20 @@ export default class EditTemplate extends React.Component {
     const { dispatch } = this.props;
 
     dispatch({
-      type: 'listSearchProjects/fetch4',
+      type: 'listSearchProjects/queryT',
       payload: {
         id: this.props.match.params.id
       },
     });
 
     dispatch({
-      type: 'listSearchProjects/fetch2',
+      type: 'listSearchProjects/querySubjectStatic',
     }).then(() => {
       const {
        listSearchProjects: { staticData = {} },
      } = this.props;
      const { subjectProductList = [] } = staticData
      console.log(this.props.listSearchProjects.edit.subjectProductId)
-     debugger
       dispatch({
         type: 'listSearchProjects/fetch31',
         payload: {

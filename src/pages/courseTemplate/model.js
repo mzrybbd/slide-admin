@@ -1,4 +1,4 @@
-import { queryList, querySubjectProducts, queryGrade, queryTempalte,deleteTemplate, putTemplate, copyTemplate, putStatus,createTemplate, putAnyTemplate } from './service';
+import { queryList, querySubjectProducts, queryGrade, queryTemplate, deleteTemplate, putTemplate, copyTemplate, putStatus, createTemplate, putAnyTemplate } from './service';
 import responsiveObserve from 'antd/lib/_util/responsiveObserve';
 import { message } from 'antd';
 import router from 'umi/router';
@@ -6,7 +6,7 @@ import router from 'umi/router';
 const Model = {
   namespace: 'listSearchProjects',
   state: {
-    list: [],
+    list: [],  
     staticData: {},
     grade1: [],
     grade2: [],
@@ -20,82 +20,82 @@ const Model = {
     putAnyRes: {}
   },
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *queryFilterList({ payload }, { call, put }) {
       const response = yield call(queryList, payload);
       if(response.status === 1 && response.errorCode === 0){
         yield put({
           type: 'queryList',
           payload: response.body
         });
-      }else{
+      } else {
         message.error('接口调用失败')
       }
     },
-    *fetch2({ payload }, { call, put }) {
+    *querySubjectStatic({ payload }, { call, put }) {
       const response = yield call(querySubjectProducts, payload);
       if(response.status === 1 && response.errorCode === 0){
         yield put({
-          type: 'queryStatic',
+          type: 'queryStaticData',
           payload: response.body
         });
-      }else{
+      } else {
         message.error('接口调用失败')
       }
     },
     *fetch31({ payload }, { call, put }) {
       const response = yield call(queryGrade, payload);
-      if(response.status === 1 && response.errorCode === 0){
+      if(response.status === 1 && response.errorCode === 0) {
         yield put({
           type: 'queryGrade1',
           payload: Array.isArray(response.body) ? response.body : [],
         });
-      }else{
+      } else {
         message.error('接口调用失败')
       }
     },
     *fetch32({ payload }, { call, put }) {
       const response = yield call(queryGrade, payload);
-      if(response.status === 1 && response.errorCode === 0){
+      if(response.status === 1 && response.errorCode === 0) {
         yield put({
           type: 'queryGrade2',
           payload: Array.isArray(response.body) ? response.body : [],
         });
-      }else{
+      } else {
         message.error('接口调用失败')
       }
     },
     *fetch33({ payload }, { call, put }) {
       const response = yield call(queryGrade, payload);
-      if(response.status === 1 && response.errorCode === 0){
+      if(response.status === 1 && response.errorCode === 0) {
         yield put({
           type: 'queryGrade3',
           payload: Array.isArray(response.body) ? response.body : [],
         });
-      }else{
+      }else {
         message.error('接口调用失败')
       }
     },
-    *fetch4({ payload }, { call, put }) {
-      const response = yield call(queryTempalte, payload);
+    *queryT({ payload }, { call, put }) {
+      const response = yield call(queryTemplate, payload);
       if(response.status === 1 && response.errorCode === 0){
         yield put({
-          type: 'queryTempalte',
+          type: 'queryTemplate',
           payload: response.body
         });
-      }else{
+      } else {
         message.error('接口调用失败')
       }
     },
     *createT({ payload }, { call, put }) {
       const response = yield call(createTemplate, payload);
-      if(response.status === 1 && response.errorCode === 0){
+      if(response.status === 1 && response.errorCode === 0) {
         yield put({
           type: 'createTemplate',
           payload: response
         });
         message.success('创建成功')
-        router.push('/courseTemplate/'+response.body)
-      }else if(response.errorCode === 100002) {
+        router.push('/courseTemplate/' + response.body)
+      } else if(response.errorCode === 100002) {
         message.warning('课程模板名称已存在')
       }
     },
@@ -134,7 +134,7 @@ const Model = {
           payload: response.body
         });
         message.success('复制成功')
-      }else{
+      }else {
         message.error('复制失败')
       }
     },
@@ -172,7 +172,7 @@ const Model = {
     queryList(state, action) {
       return { ...state, list: action.payload };
     },
-    queryStatic(state, action) {
+    queryStaticData(state, action) {
       return { ...state, staticData: action.payload };
     },
     queryGrade1(state, action) {
@@ -184,7 +184,7 @@ const Model = {
     queryGrade3(state, action) {
       return { ...state, grade3: action.payload };
     },
-    queryTempalte(state, action) {
+    queryTemplate(state, action) {
       return { ...state, edit: action.payload };
     },
     putTemplate(state, action) {
