@@ -82,10 +82,8 @@ const Model = {
           type: 'queryTemplate',
           payload: response.body
         });
-      } else if (response.status === 0 && response.errorCode === 0) {
-        router.push('/courseTemplate/404')
       } else {
-        message.error('接口调用失败')
+        router.push('/404')
       }
     },
     *createT({ payload }, { call, put }) {

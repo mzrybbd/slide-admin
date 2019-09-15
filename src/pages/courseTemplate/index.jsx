@@ -168,7 +168,7 @@ class Projects extends Component {
             listSearchProjects: { list = {} },
           } = props;
           let page = Math.ceil(list.itemTotal % 12)
-          if(page === 1 && pageNo > 1){
+          if (page === 1 && pageNo > 1) {
             pageNo -= 1
           }
           console.log(page, pageNo)

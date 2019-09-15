@@ -66,7 +66,7 @@ class TagSelect extends Component {
       checked = !checked
     }
     checkedTags = this.getAllTags();
-    this.onChange(checkedTags); 
+    this.onChange(checkedTags);
   };
 
   getAllTags() {
@@ -82,14 +82,14 @@ class TagSelect extends Component {
     const { value: StateValue } = this.state;
     const checkedTags = [...StateValue];
     const index = checkedTags.indexOf(value);
-    if(this.props.radioable){
-      if(index === -1){
+    if (this.props.radioable) {
+      if (index === -1) {
         checkedTags.splice(0, 1, value)
       }
-    }else{
+    } else {
       if (checked && index === -1) {
         checkedTags.push(value);
-      } else if (!checked && index > -1 && checkedTags.length > 1)  {
+      } else if (!checked && index > -1 && checkedTags.length > 1) {
         checkedTags.splice(index, 1);
       }
     }
@@ -110,7 +110,7 @@ class TagSelect extends Component {
 
   render() {
     const { value, expand } = this.state;
-    const { children, hideCheckAll, className, style, radioable, actionsText = {}} = this.props;
+    const { children, hideCheckAll, className, style, radioable, actionsText = {} } = this.props;
     const checkedAll = this.getAllTags().length === value.length;
     const { selectAllText = '全部' } = actionsText;
     const cls = classNames(styles.tagSelect, className, {
@@ -119,7 +119,7 @@ class TagSelect extends Component {
     return (
       <div className={cls} style={style}>
         {hideCheckAll ? null : (
-          <CheckableTag checked={checkedAll} key="tag-select-__all__"  onChange={this.onSelectAll}>
+          <CheckableTag checked={checkedAll} key="tag-select-__all__" onChange={this.onSelectAll}>
             {selectAllText}
           </CheckableTag>
         )}
@@ -130,7 +130,7 @@ class TagSelect extends Component {
               return React.cloneElement(child, {
                 key: `tag-select-${child.props.value}`,
                 value: child.props.value,
-                checked: checkedAll && !hideCheckAll ? false: value.indexOf(child.props.value) > -1,
+                checked: checkedAll && !hideCheckAll ? false : value.indexOf(child.props.value) > -1,
                 onChange: checkedAll ? this.handleTagChange2 : this.handleTagChange
               });
             }

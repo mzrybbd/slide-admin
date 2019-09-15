@@ -30,7 +30,7 @@ export async function putTemplate(params) {
 }
 //获取某一模版
 export async function queryTemplate(params) {
-  return request('/structureTempApi/structureTemps/'+ params.id)
+  return request('/structureTempApi/structureTemps/' + params.id)
 }
 //复制模版
 export async function copyTemplate(params) {
@@ -53,7 +53,7 @@ export async function createTemplate(params) {
 }
 //更新某一模版的首页状态
 export async function putAnyTemplate(params) {
-  return request('/structureTempEditor/structureTemps/'+ params.id + '/tempType/' + params.type + '/status/' + params.status, {
+  return request('/structureTempEditor/structureTemps/' + params.id + '/tempType/' + params.type + '/status/' + params.status, {
     method: 'PUT',
   });
 }

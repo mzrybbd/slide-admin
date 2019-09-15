@@ -60,9 +60,7 @@ class CoverPage extends React.Component {
     loading: false,
   };
 
-
   handleChange = info => {
-
     if (info.file.status === 'uploading') {
       this.setState({ loading: true });
       return;
