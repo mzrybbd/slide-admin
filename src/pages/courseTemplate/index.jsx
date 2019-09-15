@@ -5,8 +5,8 @@ import moment from 'moment';
 import router from 'umi/router';
 import StandardFormRow from './components/StandardFormRow';
 import TagSelect from './components/TagSelect';
-import CreateTemplateModal from './components/createTemplateModal.jsx'
 import styles from './style.less';
+import { CreateFrom } from './components/createForm';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -15,31 +15,30 @@ const { confirm } = Modal;
 let pageNo = 1;
 
 const getData = (props, values) => {
-  // 表单项变化时请求数据
-     // 模拟查询表单生效
-     let form = {}
-     props.form.validateFields((err, obj) => {
-       if (!err) {
-         form = Object.assign(obj, values);
-       }
-     });
-     const { subjectList, gradeList, termMap, yearList, status } = form
-     const prop = {
-       id: subjectList.toString(),
-       gradeList: gradeList.toString(),
-       termList: termMap.toString(),
-       yearList: yearList.toString(),
-       pageNo,
-       pageSize: 12,
-     }
-     if (status.length === 1) {
-       prop.status = status.toString()
-     }
-     props.dispatch({
-       type: 'listSearchProjects/queryFilterList',
-       payload: { ...prop },
-     });
- }
+  let form = {}
+  props.form.validateFields((err, obj) => {
+    if (!err) {
+      form = Object.assign(obj, values);
+    }
+  });
+
+  const { subjectList, gradeList, termMap, yearList, status } = form
+  const prop = {
+    id: subjectList.toString(),
+    gradeList: gradeList.toString(),
+    termList: termMap.toString(),
+    yearList: yearList.toString(),
+    pageNo,
+    pageSize: 12,
+  }
+  if (status.length === 1) {
+    prop.status = status.toString()
+  }
+  props.dispatch({
+    type: 'listSearchProjects/queryFilterList',
+    payload: { ...prop },
+  });
+}
 
 class Projects extends Component {
   state = {
@@ -58,17 +57,50 @@ class Projects extends Component {
     });
   };
 
-  handleCreate = e => {
-    this.setState({
-      visible: false,
-    });
-  };
-
   handleCancel = () => {
     this.setState({
       visible: false,
     });
   };
+
+  handleCreate = () => {
+    let demo = this.refs.getFormValue;
+    let form = {}
+    demo.validateFields((err, values) => {
+      if (!err) {
+        form = values;
+      }
+      let formData = new FormData()
+      if (form.file) {
+        form.file.fileList.forEach((fileBlob) => {
+          formData.append('file', fileBlob.originFileObj)
+        })
+      }
+      formData.append('title', form.title)
+      formData.append('gradeList', form.gradeList.toString())
+      formData.append('yearList', form.yearList.toString())
+      formData.append('termList', form.termList.toString())
+      formData.append('inverted', form.inverted ? 1 : 0)
+      formData.append('subjectProductId', form.subjectProductId.toString())
+
+      this.props.dispatch({
+        type: 'listSearchProjects/createT',
+        payload: formData,
+      }).then(() => {
+        const {
+          listSearchProjects: { createRes = {} },
+        } = this.props;
+        console.log(createRes)
+        if (createRes.status === 1 && createRes.errorCode === 0) {
+          demo.resetFields()
+          this.setState({
+            visible: false,
+          });
+          getData(this.props, this.props.form.getFieldsValue())
+        }
+      });
+    })
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -78,35 +110,34 @@ class Projects extends Component {
       type: 'listSearchProjects/querySubjectStatic',
     }).then(() => {
       const {
-       listSearchProjects: { staticData = {} },
-     } = this.props;
-     const { subjectProductList = [] } = staticData
+        listSearchProjects: { staticData = {} },
+      } = this.props;
+      const { subjectProductList = [] } = staticData
       id = subjectProductList[0].id
       dispatch({
         type: 'listSearchProjects/fetch33',
         payload: {
           id,
         },
+      }).then(() => {
+        const {
+          listSearchProjects: { grade3 = [], staticData = {} },
+        } = this.props;
+        const { yearList = [], termMap = {} } = staticData
+        const gradeList = grade3.map(item => item.id)
+        console.log(gradeList, grade3)
+        dispatch({
+          type: 'listSearchProjects/queryFilterList',
+          payload: {
+            id,
+            gradeList: gradeList.toString(),
+            termList: Object.keys(termMap).toString(),
+            yearList: yearList.toString(),
+            pageNo: 1,
+            pageSize: 12,
+          },
+        });
       })
-    }).then(() => {
-      const {
-        listSearchProjects: { grade3 = [], staticData = {} },
-      } = this.props;
-      const { subjectProductList = [], yearList = [], termMap = {} } = staticData
-       id = subjectProductList[0].id
-       const gradeList = grade3.map(item => item.id)
-       console.log(gradeList)
-      dispatch({
-        type: 'listSearchProjects/queryFilterList',
-        payload: {
-          id,
-          gradeList: gradeList.toString(),
-          termList: Object.keys(termMap).toString(),
-          yearList: yearList.toString(),
-          pageNo: 1,
-          pageSize: 12,
-        },
-      });
     })
   }
 
@@ -127,13 +158,22 @@ class Projects extends Component {
       okType: 'danger',
       cancelText: '取消',
       onOk() {
-         dispatch({
+        dispatch({
           type: 'listSearchProjects/deleteT',
           payload: {
             id,
           },
+        }).then(() => {
+          const {
+            listSearchProjects: { list = {} },
+          } = props;
+          let page = Math.ceil(list.itemTotal % 12)
+          if(page === 1 && pageNo > 1){
+            pageNo -= 1
+          }
+          console.log(page, pageNo)
+          getData(props, props.form.getFieldsValue())
         })
-        getData(props, props.form.getFieldsValue())
       },
       onCancel() {
         console.log('取消删除');
@@ -150,8 +190,9 @@ class Projects extends Component {
       payload: {
         id,
       },
+    }).then(() => {
+      getData(props, props.form.getFieldsValue())
     })
-    getData(props, props.form.getFieldsValue())
   }
 
   toggleStatus = async (id, status) => {
@@ -164,15 +205,16 @@ class Projects extends Component {
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
-       onOk() {
-         dispatch({
+      onOk() {
+        dispatch({
           type: 'listSearchProjects/putS',
           payload: {
             id,
             status: status ? 0 : 1,
           },
+        }).then(() => {
+          getData(props, props.form.getFieldsValue())
         })
-        getData(props, props.form.getFieldsValue())
       },
       onCancel() {
         console.log('取消删除');
@@ -189,7 +231,7 @@ class Projects extends Component {
 
   async changeGrade(tag) {
     const { dispatch, form } = this.props;
-
+    pageNo = 1
     await dispatch({
       type: 'listSearchProjects/fetch33',
       payload: {
@@ -224,24 +266,24 @@ class Projects extends Component {
         renderItem={item => (
           <List.Item>
             <Card
-            className={styles.card}
-            hoverable
-            title={item.title}
-            cover={
-              <img
-                alt={item.title}
-                src={item.previewImg}
-              />
-            }
+              className={styles.card}
+              hoverable
+              title={item.title}
+              cover={
+                <img
+                  alt={item.title}
+                  src={item.previewImg || "http://diy-courseware.aixuexi.com/images/medium/missing.png"}
+                />
+              }
             >
               <Card.Meta
                 title={<span className={styles.flex}>
-                <ConfigProvider autoInsertSpaceInButton={this.state.flag}>
-                <Button size="small" target="_blank" href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
-                <Button size="small" onClick={() => this.editTemplate(item.id)}>编辑</Button>
-                <Button size="small" disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
-                <Button size="small" disabled={item.referenced} onClick={() => this.toggleStatus(item.id, item.enabled)}>{item.enabled ? '禁用' : '启用'}</Button>
-                <Button size="small" onClick={() => this.copy(item.id)}>复制</Button></ConfigProvider></span>}
+                  <ConfigProvider autoInsertSpaceInButton={this.state.flag}>
+                    <Button size="small" target="_blank" href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
+                    <Button size="small" onClick={() => this.editTemplate(item.id)}>编辑</Button>
+                    <Button size="small" disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>
+                    <Button size="small" disabled={item.referenced} onClick={() => this.toggleStatus(item.id, item.enabled)}>{item.enabled ? '禁用' : '启用'}</Button>
+                    <Button size="small" onClick={() => this.copy(item.id)}>复制</Button></ConfigProvider></span>}
               />
             </Card>
 
@@ -263,7 +305,7 @@ class Projects extends Component {
       <div className={styles.coverCardList}>
         <Card bordered={false}>
           <Form layout="inline">
-           <StandardFormRow
+            <StandardFormRow
               title="学科"
               block
               style={{
@@ -275,9 +317,9 @@ class Projects extends Component {
                   initialValue: defaultSubject.slice(0, 1),
                 })(
                   <TagSelect hideCheckAll radioable onChange={tag => this.changeGrade(tag)}>
-                  {subjectProductList.map((item, index) => (
-                    <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
-                  ))}
+                    {subjectProductList.map((item, index) => (
+                      <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
+                    ))}
                   </TagSelect>,
                 )}
               </FormItem>
@@ -295,8 +337,8 @@ class Projects extends Component {
                 })(
                   <TagSelect>
                     {grade3.map((item, index) => (
-                    <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
-                  ))}
+                      <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
+                    ))}
                   </TagSelect>,
                 )}
               </FormItem>
@@ -314,7 +356,7 @@ class Projects extends Component {
                 })(
                   <TagSelect>
                     {Object.keys(termMap).map((index, item) => (
-                     <TagSelect.Option value={index} key={index}>{termMap[index]}</TagSelect.Option>
+                      <TagSelect.Option value={index} key={index}>{termMap[index]}</TagSelect.Option>
                     ))}
                   </TagSelect>,
                 )}
@@ -333,7 +375,7 @@ class Projects extends Component {
                 })(
                   <TagSelect>
                     {yearList.map((item, index) => (
-                     <TagSelect.Option value={item} key={index}>{item}</TagSelect.Option>
+                      <TagSelect.Option value={item} key={index}>{item}</TagSelect.Option>
                     ))}
                   </TagSelect>,
                 )}
@@ -362,13 +404,18 @@ class Projects extends Component {
             新建
           </Button>
         </Card>
-        <CreateTemplateModal
-          visible={ this.state.visible }
-          onCancel={ this.handleCancel }
-          onCreate={ this.handleCreate }>
-        </CreateTemplateModal>
-        <div className={ styles.cardList }>{cardList}</div>
-        <Pagination current={ list.pageNum || 1 } pageSize={ list.pageSize || 1 } onChange={ this.onChange } total={ list.itemTotal || 1 } hideOnSinglePage={ this.state.flag } />
+
+        <Modal
+          title="新建课程模版"
+          visible={this.state.visible}
+          onOk={this.handleCreate}
+          onCancel={this.handleCancel}
+          centered
+        >
+          <CreateFrom ref="getFormValue" ></CreateFrom>
+        </Modal>
+        <div className={styles.cardList}>{cardList}</div>
+        <Pagination current={list.pageNum || 1} pageSize={list.pageSize || 1} onChange={this.onChange} total={list.itemTotal || 1} hideOnSinglePage={this.state.flag} />
       </div>
     );
   }

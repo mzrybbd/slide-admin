@@ -18,60 +18,60 @@ import CoverPage from './coverPage';
 const { TextArea } = Input
 import { connect } from 'dva';
 
-@connect(({ listSearchProjects, loading }) => ({  
+@connect(({ listSearchProjects, loading }) => ({
   listSearchProjects,
   loading: loading.models.listSearchProjects,
 }))
 
 export const CreateFrom = Form.create({ name: 'create_form' })(
 
-class extends React.Component {
-  state = {
-    fileList: [],
-    file: {}
-  }
-  createTemplate = e => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
-  };
+  class extends React.Component {
+    state = {
+      fileList: [],
+      file: {}
+    }
+    createTemplate = e => {
+      e.preventDefault();
+      this.props.form.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values);
+        }
+      });
+    };
 
-  async changeGradeList(tag) {
-    const { dispatch, form } = this.props;
+    async changeGradeList(tag) {
+      const { dispatch, form } = this.props;
 
-    await dispatch({
-      type: 'listSearchProjects/fetch32',
-      payload: {
-        id: tag,
-      },
-    });
-    form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade2.map(item => item.id) })
-  }
-  componentDidMount() {
-    const { dispatch } = this.props;
-    let id = 1
-    
-    dispatch({
-      type: 'listSearchProjects/querySubjectStatic',
-    }).then(() => {
-      const {
-       listSearchProjects: { staticData = {} },
-     } = this.props;
-     const { subjectProductList = []} = staticData
-      id = subjectProductList[0].id
-      dispatch({
+      await dispatch({
         type: 'listSearchProjects/fetch32',
         payload: {
-          id: id,
+          id: tag,
         },
+      });
+      form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade2.map(item => item.id) })
+    }
+    componentDidMount() {
+      const { dispatch } = this.props;
+      let id = 1
+
+      dispatch({
+        type: 'listSearchProjects/querySubjectStatic',
+      }).then(() => {
+        const {
+          listSearchProjects: { staticData = {} },
+        } = this.props;
+        const { subjectProductList = [] } = staticData
+        id = subjectProductList[0].id
+        dispatch({
+          type: 'listSearchProjects/fetch32',
+          payload: {
+            id: id,
+          },
+        })
+      }).catch(e => {
+        console.log(e)
       })
-    }).catch(e => {
-      console.log(e)
-    })
-  }
+    }
     render() {
       const formItemLayout = {
         labelCol: {
@@ -88,20 +88,20 @@ class extends React.Component {
       const {
         listSearchProjects: { list = {}, grade2 = [], staticData = {} },
         loading,
-        visible, 
-        onCancel, 
-        onCreate, 
+        visible,
+        onCancel,
+        onCreate,
         form,
       } = this.props;
       const { getFieldDecorator } = form;
-      const { subjectProductList = [], yearList = [], termMap ={} } = staticData
+      const { subjectProductList = [], yearList = [], termMap = {} } = staticData
       const defaultSubject = subjectProductList.map(function (item) {
-        return item['id']; 
+        return item['id'];
       })
-      let  { fileList } = this.state
+      let { fileList } = this.state
       const fileprops = {
         accept: 'image/*',
-        
+
         onRemove: file => {
           this.setState(state => {
             const index = state.fileList.indexOf(file);
@@ -135,12 +135,12 @@ class extends React.Component {
           <Form.Item label="学科" >
             {getFieldDecorator('subjectProductId', {
               rules: [{ required: true, message: '请选择学科' }],
-              initialValue: defaultSubject.slice(0,1)
+              initialValue: defaultSubject.slice(0, 1)
             })(
               <Select placeholder="请选择学科" onChange={(tag) => this.changeGradeList(tag)}>
-                 {subjectProductList.map((item, index) => (
-                    <Select.Option value={item.id} key={index}>{item.name}</Select.Option>
-                  ))}
+                {subjectProductList.map((item, index) => (
+                  <Select.Option value={item.id} key={index}>{item.name}</Select.Option>
+                ))}
               </Select>,
             )}
           </Form.Item>
@@ -148,13 +148,13 @@ class extends React.Component {
             {getFieldDecorator('gradeList', {
               rules: [{ required: true, message: '请选择年级' }],
               initialValue: grade2.map(function (item) {
-                return item['id']; 
+                return item['id'];
               })
             })(
               <Checkbox.Group>
                 {grade2.map((item, index) => (
-                    <Checkbox value={item.id} key={index}>{item.name}</Checkbox>
-                  ))}
+                  <Checkbox value={item.id} key={index}>{item.name}</Checkbox>
+                ))}
               </Checkbox.Group>
             )}
           </Form.Item>
@@ -162,10 +162,10 @@ class extends React.Component {
             {getFieldDecorator('termList', {
               rules: [{ required: true, message: '请选择学期' }],
               initialValue: Object.keys(termMap)
-           })(
+            })(
               <Checkbox.Group>
                 {Object.keys(termMap).map((index, item) => (
-                    <Checkbox value={index} key={index}>{termMap[index]}</Checkbox>
+                  <Checkbox value={index} key={index}>{termMap[index]}</Checkbox>
                 ))}
               </Checkbox.Group>
             )}
@@ -174,23 +174,23 @@ class extends React.Component {
           <Form.Item label="年份">
             {getFieldDecorator('yearList', {
               rules: [
-                { required: true, message: '请选择年份', type: 'array',
-                
-               },
+                {
+                  required: true, message: '请选择年份', type: 'array',
+                },
               ],
-              initialValue: yearList
+              initialValue: yearList.slice(1, 2)
             })(
               <Checkbox.Group>
                 {yearList.map((item, index) => (
-                    <Checkbox value={item} key={index}>{item}</Checkbox>
+                  <Checkbox value={item} key={index}>{item}</Checkbox>
                 ))}
               </Checkbox.Group>
             )}
           </Form.Item>
           <Form.Item label="模版名称">
             {getFieldDecorator('title', {
-              rules: [{ required: true, message: '请输入课程模版名称' },{
-                max:100,
+              rules: [{ required: true, message: '请输入课程模版名称' }, {
+                max: 100,
                 message: '名称不能超过100字符',
               },],
             })(<Input placeholder="请输入课程模版名称" />)}
@@ -198,16 +198,16 @@ class extends React.Component {
           <Form.Item label="题目页反色">
             {getFieldDecorator('inverted', { valuePropName: 'checked' })(<Switch />)}
           </Form.Item>
-         
+
           <Form.Item label="模版封面页">
-          {getFieldDecorator('file')(
-            <Upload {...fileprops}>
-              <Button>
-                <Icon type="upload" /> 上传
+            {getFieldDecorator('file')(
+              <Upload {...fileprops}>
+                <Button>
+                  <Icon type="upload" /> 上传
               </Button>
-            </Upload>
-          )}
-        </Form.Item>
+              </Upload>
+            )}
+          </Form.Item>
         </Form>
       );
     }

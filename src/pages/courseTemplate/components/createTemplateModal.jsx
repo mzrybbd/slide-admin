@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import { Modal, Button } from 'antd';
 import { CreateFrom } from './createForm';
 import { connect } from 'dva';
-@connect(({ listSearchProjects, loading }) => ({  
+@connect(({ listSearchProjects, loading }) => ({
   listSearchProjects,
   loading: loading.models.listSearchProjects,
 }))
@@ -12,14 +12,14 @@ class CreateTemplateModal extends React.Component {
   state = { visible: false };
 
   onCreate = () => {
-    let demo=this.refs.getFormValue;
+    let demo = this.refs.getFormValue;
     let form = {}
     demo.validateFields((err, values) => {
-      if(!err){
+      if (!err) {
         form = values;
       }
       let formData = new FormData()
-      if(form.file) {
+      if (form.file) {
         form.file.fileList.forEach((fileBlob) => {
           formData.append('file', fileBlob.originFileObj)
         })
@@ -32,8 +32,8 @@ class CreateTemplateModal extends React.Component {
       formData.append('subjectProductId', form.subjectProductId.toString())
 
       this.props.dispatch({
-        type:'listSearchProjects/createT',
-        payload:formData,
+        type: 'listSearchProjects/createT',
+        payload: formData,
       });
     })
   }
@@ -45,9 +45,9 @@ class CreateTemplateModal extends React.Component {
       <div>
         <Modal
           title="新建课程模版"
-          visible={ visible }
-          onOk={ this.onCreate }
-          onCancel={ onCancel }
+          visible={visible}
+          onOk={onCreate}
+          onCancel={onCancel}
           centered
         >
           <CreateFrom ref="getFormValue" ></CreateFrom>

@@ -17,13 +17,37 @@ function beforeUpload(file) {
   if (!isLt2M) {
     message.error('封面图必须小于10MB!');
   }
-  return true;
+  return false;
 }
+const fileprops = {
+  accept: 'image/*',
+  
+  onRemove: file => {
+    this.setState(state => {
+      const index = state.fileList.indexOf(file);
+      const newFileList = state.fileList.slice();
+      newFileList.splice(index, 1);
+      return {
+        fileList: newFileList,
+      };
+    });
+  },
+  beforeUpload: file => {
+    this.setState(state => ({
+      fileList: [...state.fileList, file],
+    }));
+    return false;
+  },
+  onChange(info) {
+    let fileList = info.fileList;
+    fileList = fileList.slice(-1);
+  },
+};
 
 class CoverPage extends React.Component {
 
-  static getDerivedStateFromProps(props){
-    if (props.imageUrl){
+  static getDerivedStateFromProps(props) {
+    if (props.imageUrl) {
       return {
         imageUrl: props.imageUrl,
       }
@@ -70,7 +94,7 @@ class CoverPage extends React.Component {
         className="avatar-uploader"
         showUploadList={false}
         action=""
-        beforeUpload={beforeUpload}
+        beforeUpload={this.beforeUpload}
         onChange={this.handleChange}
       >
         {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
