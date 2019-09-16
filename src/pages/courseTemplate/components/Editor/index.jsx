@@ -12,6 +12,9 @@ import router from 'umi/router';
 }))
 
 export default class EditTemplate extends React.Component {
+  state = {
+    flag: true
+  }
   columns = [
     {
       title: '课件页类型',
@@ -70,7 +73,7 @@ export default class EditTemplate extends React.Component {
           listSearchProjects: { staticData = {} },
         } = this.props;
         const { subjectProductList = [] } = staticData
-        if(this.props.listSearchProjects.edit.subjectProductId){
+        if (this.props.listSearchProjects.edit.subjectProductId) {
           dispatch({
             type: 'listSearchProjects/fetch31',
             payload: {
@@ -98,7 +101,7 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        <UpdateFrom ref="getFormValue" id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit}></UpdateFrom>
+        {this.state.flag && (<UpdateFrom ref="getFormValue" id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit}></UpdateFrom>)}
         <h2>模版课件页</h2>
         <Table
           dataSource={templateVoList}

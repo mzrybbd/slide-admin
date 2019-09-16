@@ -23,31 +23,12 @@ import EditTemplate from './Editor';
 export const UpdateFrom = Form.create({ name: 'update_form' })(
 
   class extends React.Component {
-    // static getDerivedStateFromProps(props, state) {
-    //     return {
-    //       fileList1: props.formList.previewImg ? [
-    //         {
-    //           uid: "-1",
-    //           status: "done",
-    //           name: props.formList.previewImg,
-    //           url: props.formList.previewImg
-    //         }
-    //       ] : []
-    //     }
-    // };
     constructor(props) {
       super(props);
       this.state = {
         id: props.formList.subjectProductId,
         loading: false,
-        fileList: props.formList.previewImg ? [
-          {
-            uid: "-1",
-            status: "done",
-            name: props.formList.previewImg,
-            url: props.formList.previewImg
-          }
-        ] : []
+        fileList: []
       }
       // form.setFieldsValue({ file: this.state.fileList })
     }
@@ -61,11 +42,11 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
         }
         return file;
       });
-
+      this.props.form.setFieldsValue({ file: this.state.fileList })
       this.setState({ fileList });
     };
     handleRemove = info => {
-      this.setState({fileList: []})
+      this.setState({ fileList: [] })
     }
     beforeUpload = file => {
       const isLt2M = file.size / 1024 / 1024 < 10;
@@ -99,13 +80,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           formData.append('style', form.style || '')
 
           if (!!form.file) {
-            if(form.file.fileList.length >= 1){
-              formData.append('file', form.file.fileList.pop().originFileObj)
-            }
-          }
-
-          if (!!form.file) {
-            if(form.file.fileList.length > 1){
+            if (form.file.fileList.length >= 1) {
               formData.append('file', form.file.fileList.pop().originFileObj)
             }
           }
@@ -129,6 +104,18 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade1.map(item => item.id) })
     }
+    componentDidMount() {
+      this.setState({
+        fileList: this.props.formList.previewImg ? [
+          {
+            uid: "-1",
+            status: "done",
+            name: this.props.formList.previewImg,
+            url: this.props.formList.previewImg
+          }
+        ] : []
+      })
+    }
 
     render() {
       const { form, reference, formList, onUpdate, id } = this.props;
@@ -142,6 +129,9 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       } = this.props;
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
       let subjectId = [].concat(formList.subjectProductId)
+      let value = subjectProductList.filter((item, index) => {
+        return item.id == subjectId
+      })
 
       const formItemLayout = {
         labelCol: {
@@ -168,11 +158,10 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       );
       const fileprops = {
         accept: 'image/*',
-
+        defaultFileList: this.state.fileList,
         beforeUpload: file => {
-          this.setState(({ fileList }) => ({
-            fileData: [...fileList, file],
-          }))
+          console.log(file, this.state.fileList)
+
           return false;
         },
         onChange: this.handleChange,
@@ -193,9 +182,9 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
               </Select>,
             )}
           </Form.Item>)}
-          {reference && (<Form.Item label="学科" >
+          {reference && value[0] && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId')(
-              <span className="ant-form-text">{id}</span>
+              <span className="ant-form-text">{ value[0].name }</span>
             )}
           </Form.Item>)}
           <Form.Item label="年级" >
@@ -275,8 +264,10 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             )}
           </Form.Item>
           <Form.Item label="模版封面页">
-            {getFieldDecorator('file')(
-              <Upload {...fileprops}  fileList={this.state.fileList}  key={Math.random()}>
+            {getFieldDecorator('file', {
+               initialValue: this.state.fileList
+            })(
+              <Upload {...fileprops} fileList={this.state.fileList}>
                 <Button>
                   <Icon type="upload" /> 上传
                  </Button>
