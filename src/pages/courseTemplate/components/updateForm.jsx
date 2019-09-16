@@ -23,8 +23,7 @@ import EditTemplate from './Editor';
 export const UpdateFrom = Form.create({ name: 'update_form' })(
 
   class extends React.Component {
-    static getDerivedStateFromProps(props) {
-      if( props.formList.previewImg){
+    static getDerivedStateFromProps(props, state) {
         return {
           fileList1: [
             {
@@ -35,39 +34,25 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             }
           ]
         }
-      }
-      return null;
     };
     constructor(props) {
       super(props);
       this.state = {
         id: props.formList.subjectProductId,
         loading: false,
-        fileList: [],
-        fileList: [
+        fileList1: [],
+        fileList: props.formList.previewImg ? [
           {
             uid: "-1",
             status: "done",
-            name: this.props.formList.previewImg,
-            url: this.props.formList.previewImg
+            name: props.formList.previewImg,
+            url: props.formList.previewImg
           }
-        ]
+        ] : []
       }
+      // form.setFieldsValue({ file: this.state.fileList })
     }
-    getBase64 = (img, callback) => {
-      console.log(img)
-      const reader = new FileReader();
-      reader.addEventListener("load", () => callback(reader.result));
-      reader.readAsDataURL({ img });
-    }
-    // handleChange = info => {
-    // this.getBase64(info.file.originFileObj, imageUrl =>
-    // this.setState({
-    //   imageUrl,
-    //   loading: false,
-    // }),
-    // );
-    // };
+
     handleChange = info => {
       let fileList = [...info.fileList];
       fileList = fileList.slice(-1);
@@ -79,8 +64,10 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       });
 
       this.setState({ fileList });
-      console.log(this.state.fileList)
     };
+    handleRemove = info => {
+      this.setState({fileList: []})
+    }
     beforeUpload = file => {
       const isLt2M = file.size / 1024 / 1024 < 10;
       if (!isLt2M) {
@@ -94,19 +81,11 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
     updateTemplate = e => {
       let form = {}
       e.preventDefault();
-      let { id } = this.state
+      let { id, formList1 } = this.state
       this.props.form.validateFields((err, values) => {
         if (!err) {
           form = values
-
           let formData = new FormData()
-          console.log(form, this.props.formList.subjectProductId, this.state.id)
-          if (form.file) {
-            formData.append('file', form.file.fileList.pop().originFileObj)
-            // form.file.fileList.forEach((fileBlob) => {
-            //   formData.append('file', fileBlob.originFileObj)
-            // })
-          }
           formData.append('id', this.props.url)
           formData.append('title', form.title)
           formData.append('gradeList', form.gradeList.toString())
@@ -119,14 +98,30 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : this.state.id)
           formData.append('skin', form.skin || '')
           formData.append('style', form.style || '')
+          console.log('外侧', form.file)
+
+          if (!!form.file) {
+            console.log(form.file)
+            if(form.file.fileList.length >= 1){
+              formData.append('file', form.file.fileList.pop().originFileObj)
+            }
+          }
+          // if (form.file.fileList > 1) {
+          //   formData.append('file', form.file.fileList.pop().originFileObj )
+          // }
+          if (!!form.file) {
+            if(form.file.fileList.length > 1){
+              formData.append('file', form.file.fileList.pop().originFileObj)
+            }
+          }
           console.log('===', form)
+
           this.props.dispatch({
             type: 'listSearchProjects/putT',
             payload: formData,
           })
         }
       });
-
     };
 
     async changeGradeList(tag) {
@@ -140,6 +135,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade1.map(item => item.id) })
     }
+
     render() {
       const { form, reference, formList, onUpdate, id } = this.props;
       const { getFieldDecorator } = form;
@@ -150,9 +146,9 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
         onCancel,
         onCreate,
       } = this.props;
-      const { imageUrl } = this.state;
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
       let subjectId = [].concat(formList.subjectProductId)
+      console.log()
 
       const formItemLayout = {
         labelCol: {
@@ -186,7 +182,8 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           }))
           return false;
         },
-        onChange: this.handleChange
+        onChange: this.handleChange,
+        onRemove: this.handleRemove
       };
       return (
         <Form {...formItemLayout} >
@@ -286,25 +283,13 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           </Form.Item>
           <Form.Item label="模版封面页">
             {getFieldDecorator('file', {
-              initialValue: this.state.fileList1
+              initialValue: this.state.fileList
             })(
-              <Upload {...fileprops} fileList={this.state.fileList} key={Math.random()}>
+              <Upload {...fileprops}  fileList={this.state.fileList}  key={Math.random()}>
                 <Button>
                   <Icon type="upload" /> 上传
                  </Button>
               </Upload>
-              // <Upload
-              //   accept="image/*"
-              //   name="coverPage"
-              //   listType="picture-card"
-              //   className="avatar-uploader"
-              //   showUploadList={false}
-              //   action=""
-              //   beforeUpload={this.beforeUpload}
-              //   onChange={this.handleChange}
-              // >
-              //   {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-              // </Upload>
             )}
           </Form.Item>
           <Form.Item {...submitFormLayout}>

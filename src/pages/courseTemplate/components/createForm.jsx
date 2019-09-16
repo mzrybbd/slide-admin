@@ -43,6 +43,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       let fileList = [...info.fileList];
       fileList = fileList.slice(-1);
       fileList = fileList.map(file => {
+        console.log('...', file)
         if (file.response) {
           file.url = file.response.url;
         }
@@ -50,8 +51,11 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       });
 
       this.setState({ fileList });
-      console.log(this.state.fileList)
+      console.log('state' ,this.state.fileList)
     };
+    handleRemove = info => {
+      this.setState({fileList: []})
+    }
     componentDidMount() {
       const { dispatch } = this.props;
       let id = 1
@@ -104,12 +108,10 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
         accept: 'image/*',
 
         beforeUpload: file => {
-          this.setState(({ fileList }) => ({
-            fileList: [...fileList, file],
-          }))
           return false;
         },
-        onChange: this.handleChange
+        onChange: this.handleChange,
+        onRemove: this.handleRemove
       };
 
       const submitFormLayout = {
@@ -180,7 +182,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
               rules: [{ required: true, message: '请输入课程模版名称' }, {
                 max: 100,
                 message: '名称不能超过100字符',
-              },],
+              }],
             })(<Input placeholder="请输入课程模版名称" />)}
           </Form.Item>
           <Form.Item label="题目页反色">

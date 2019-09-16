@@ -71,42 +71,44 @@ class Projects extends Component {
     demo.validateFields((err, values) => {
       if (!err) {
         form = values;
-      
-      let formData = new FormData()
-      console.log(form)
-      if (form.file) {
-        formData.append('file', form.file.fileList.pop().originFileObj)
 
-        // form.file.fileList.forEach((fileBlob) => {
-        //   formData.append('file', fileBlob.originFileObj)
-        // })
-      }
-      formData.append('title', form.title)
-      formData.append('gradeList', form.gradeList.toString())
-      formData.append('yearList', form.yearList.toString())
-      formData.append('termList', form.termList.toString())
-      formData.append('inverted', form.inverted ? 1 : 0)
-      formData.append('subjectProductId', form.subjectProductId.toString())
-      dispatch({
-        type: 'listSearchProjects/createT',
-        payload: formData,
-      }).then((res) => {
-        console.log(res, this.props, 'hhx.')
-        const {
-          listSearchProjects: { createRes = {} },
-        } = this.props;
-        console.log(createRes)
-        if (createRes.status === 1 && createRes.errorCode === 0) {
-          demo.resetFields()
-          this.setState({
-            visible: false,
-          });
-          getData(this.props, this.props.form.getFieldsValue())
+        let formData = new FormData()
+        console.log(form.file)
+        if (!!form.file) {
+          console.log(form.file.fileList)
+          if(form.file.fileList.length >= 1){
+            formData.append('file', form.file.fileList.pop().originFileObj)
+          }
         }
-      });
-    }})
+
+        formData.append('title', form.title)
+        formData.append('gradeList', form.gradeList.toString())
+        formData.append('yearList', form.yearList.toString())
+        formData.append('termList', form.termList.toString())
+        formData.append('inverted', form.inverted ? 1 : 0)
+        formData.append('subjectProductId', form.subjectProductId.toString())
+        dispatch({
+          type: 'listSearchProjects/createT',
+          payload: formData,
+        }).then((res) => {
+          const {
+            listSearchProjects: { createRes = {} },
+          } = this.props;
+          if (createRes.status === 1 && createRes.errorCode === 0) {
+            demo.resetFields()
+            this.setState({
+              visible: false,
+            });
+            getData(this.props, this.props.form.getFieldsValue())
+          }
+        });
+      }
+    })
   }
-  
+
+  change = () => {
+    pageNo = 1
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -340,7 +342,7 @@ class Projects extends Component {
                 {getFieldDecorator('gradeList', {
                   initialValue: grade3.map(item => item.id),
                 })(
-                  <TagSelect>
+                  <TagSelect onChange={() => this.change()}>
                     {grade3.map((item, index) => (
                       <TagSelect.Option value={item.id} key={index}>{item.name}</TagSelect.Option>
                     ))}
@@ -359,7 +361,7 @@ class Projects extends Component {
                 {getFieldDecorator('termMap', {
                   initialValue: Object.keys(termMap),
                 })(
-                  <TagSelect>
+                  <TagSelect onChange={() => this.change()}>
                     {Object.keys(termMap).map((index, item) => (
                       <TagSelect.Option value={index} key={index}>{termMap[index]}</TagSelect.Option>
                     ))}
@@ -378,7 +380,7 @@ class Projects extends Component {
                 {getFieldDecorator('yearList', {
                   initialValue: yearList,
                 })(
-                  <TagSelect>
+                  <TagSelect onChange={() => this.change()}>
                     {yearList.map((item, index) => (
                       <TagSelect.Option value={item} key={index}>{item}</TagSelect.Option>
                     ))}
@@ -397,7 +399,7 @@ class Projects extends Component {
                 {getFieldDecorator('status', {
                   initialValue: ['0', '1'],
                 })(
-                  <TagSelect radioable>
+                  <TagSelect radioable onChange={() => this.change()}>
                     <TagSelect.Option value="1">启用中</TagSelect.Option>
                     <TagSelect.Option value="0">已禁用</TagSelect.Option>
                   </TagSelect>,
@@ -409,16 +411,19 @@ class Projects extends Component {
             新建
           </Button>
         </Card>
+        {
+          this.state.visible && (        
+          <Modal
+            title="新建课程模版"
+            visible={this.state.visible}
+            onOk={this.handleCreate}
+            onCancel={this.handleCancel}
+            centered
+          >
+            <CreateFrom ref="getFormValue" ></CreateFrom>
+          </Modal>)
+        }
 
-        <Modal
-          title="新建课程模版"
-          visible={this.state.visible}
-          onOk={this.handleCreate}
-          onCancel={this.handleCancel}
-          centered
-        >
-          <CreateFrom ref="getFormValue" ></CreateFrom>
-        </Modal>
         <div className={styles.cardList}>{cardList}</div>
         <Pagination current={list.pageNum || 1} pageSize={list.pageSize || 1} onChange={this.onChange} total={list.itemTotal || 1} hideOnSinglePage={this.state.flag} />
       </div>
