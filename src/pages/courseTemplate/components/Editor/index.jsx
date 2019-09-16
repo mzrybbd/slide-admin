@@ -12,9 +12,6 @@ import router from 'umi/router';
 }))
 
 export default class EditTemplate extends React.Component {
-  state = {
-    submitting: false,
-  }
   columns = [
     {
       title: '课件页类型',
@@ -73,13 +70,14 @@ export default class EditTemplate extends React.Component {
           listSearchProjects: { staticData = {} },
         } = this.props;
         const { subjectProductList = [] } = staticData
-        console.log(this.props.listSearchProjects.edit.subjectProductId)
-        dispatch({
-          type: 'listSearchProjects/fetch31',
-          payload: {
-            id: this.props.listSearchProjects.edit.subjectProductId,
-          },
-        })
+        if(this.props.listSearchProjects.edit.subjectProductId){
+          dispatch({
+            type: 'listSearchProjects/fetch31',
+            payload: {
+              id: this.props.listSearchProjects.edit.subjectProductId,
+            },
+          })
+        }
       })
     })
   }

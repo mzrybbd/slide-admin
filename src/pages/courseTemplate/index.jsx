@@ -66,6 +66,8 @@ class Projects extends Component {
   handleCreate = () => {
     let demo = this.refs.getFormValue;
     let form = {}
+    const { dispatch } = this.props
+
     demo.validateFields((err, values) => {
       if (!err) {
         form = values;
@@ -83,8 +85,7 @@ class Projects extends Component {
       formData.append('termList', form.termList.toString())
       formData.append('inverted', form.inverted ? 1 : 0)
       formData.append('subjectProductId', form.subjectProductId.toString())
-
-      this.props.dispatch({
+      dispatch({
         type: 'listSearchProjects/createT',
         payload: formData,
       }).then(() => {
