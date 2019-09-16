@@ -8,42 +8,6 @@ function getBase64(img, callback) {
   reader.readAsDataURL(img);
 }
 
-function beforeUpload(file) {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('只能上传JPG/PNG的图片!');
-  }
-  const isLt2M = file.size / 1024 / 1024 < 10;
-  if (!isLt2M) {
-    message.error('封面图必须小于10MB!');
-  }
-  return false;
-}
-const fileprops = {
-  accept: 'image/*',
-  
-  onRemove: file => {
-    this.setState(state => {
-      const index = state.fileList.indexOf(file);
-      const newFileList = state.fileList.slice();
-      newFileList.splice(index, 1);
-      return {
-        fileList: newFileList,
-      };
-    });
-  },
-  beforeUpload: file => {
-    this.setState(state => ({
-      fileList: [...state.fileList, file],
-    }));
-    return false;
-  },
-  onChange(info) {
-    let fileList = info.fileList;
-    fileList = fileList.slice(-1);
-  },
-};
-
 class CoverPage extends React.Component {
 
   static getDerivedStateFromProps(props) {
@@ -52,7 +16,7 @@ class CoverPage extends React.Component {
         imageUrl: props.imageUrl,
       }
     }
-    return {}
+    return null
   };
 
   state = {
@@ -75,8 +39,34 @@ class CoverPage extends React.Component {
       );
     }
   };
+  beforeUpload = file => {
+    const isLt2M = file.size / 1024 / 1024 < 10;
+    if (!isLt2M) {
+      message.error('封面图必须小于10MB!');
+    }
+    return false;
+  }
+  onChange = (info) => {
+    let fileList = info.fileList;
+    fileList = fileList.slice(-1);
+  }
 
   render() {
+    const fileprops = {
+      accept: 'image/*',
+
+      beforeUpload: file => {
+        const isLt2M = file.size / 1024 / 1024 < 10;
+        if (!isLt2M) {
+          message.error('封面图必须小于10MB!');
+        }
+        return false;
+      },
+      onChange(info) {
+        let fileList = info.fileList;
+        fileList = fileList.slice(-1);
+      },
+    };
     const uploadButton = (
       <div>
         <Icon type={this.state.loading ? 'loading' : 'plus'} />

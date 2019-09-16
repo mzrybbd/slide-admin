@@ -69,8 +69,9 @@ class Projects extends Component {
     demo.validateFields((err, values) => {
       if (!err) {
         form = values;
-      }
+      
       let formData = new FormData()
+      console.log(form)
       if (form.file) {
         form.file.fileList.forEach((fileBlob) => {
           formData.append('file', fileBlob.originFileObj)
@@ -99,8 +100,9 @@ class Projects extends Component {
           getData(this.props, this.props.form.getFieldsValue())
         }
       });
-    })
+    }})
   }
+  
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -171,7 +173,6 @@ class Projects extends Component {
           if (page === 1 && pageNo > 1) {
             pageNo -= 1
           }
-          console.log(page, pageNo)
           getData(props, props.form.getFieldsValue())
         })
       },
@@ -217,7 +218,7 @@ class Projects extends Component {
         })
       },
       onCancel() {
-        console.log('取消删除');
+        console.log('取消操作');
       },
     });
   }
@@ -278,7 +279,7 @@ class Projects extends Component {
             >
               <Card.Meta
                 title={<span className={styles.flex}>
-                  <ConfigProvider autoInsertSpaceInButton={this.state.flag}>
+                  <ConfigProvider autoInsertSpaceInButton={!this.state.flag}>
                     <Button size="small" target="_blank" href={`http://slide.aixuexi.com/player.html?deck=${item.deckUuid}`} disabled={!item.deckUuid}>查看</Button>
                     <Button size="small" onClick={() => this.editTemplate(item.id)}>编辑</Button>
                     <Button size="small" disabled={item.referenced} onClick={() => this.delete(item.id)}>删除</Button>

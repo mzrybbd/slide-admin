@@ -3,8 +3,6 @@ import {
   Card,
   Form,
   Input,
-  InputNumber,
-  Radio,
   Select,
   message,
   Upload,
@@ -30,15 +28,6 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       fileList: [],
       file: {}
     }
-    createTemplate = e => {
-      e.preventDefault();
-      this.props.form.validateFields((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values);
-        }
-      });
-    };
-
     async changeGradeList(tag) {
       const { dispatch, form } = this.props;
 
@@ -50,6 +39,19 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade2.map(item => item.id) })
     }
+    handleChange = info => {
+      let fileList = [...info.fileList];
+      fileList = fileList.slice(-1);
+      fileList = fileList.map(file => {
+        if (file.response) {
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.setState({ fileList });
+      console.log(this.state.fileList)
+    };
     componentDidMount() {
       const { dispatch } = this.props;
       let id = 1
@@ -98,30 +100,16 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       const defaultSubject = subjectProductList.map(function (item) {
         return item['id'];
       })
-      let { fileList } = this.state
       const fileprops = {
         accept: 'image/*',
 
-        onRemove: file => {
-          this.setState(state => {
-            const index = state.fileList.indexOf(file);
-            const newFileList = state.fileList.slice();
-            newFileList.splice(index, 1);
-            return {
-              fileList: newFileList,
-            };
-          });
-        },
         beforeUpload: file => {
-          this.setState(state => ({
-            fileList: [...state.fileList, file],
-          }));
+          this.setState(({ fileList }) => ({
+            fileData: [...fileList, file],
+          }))
           return false;
         },
-        onChange(info) {
-          let fileList = info.fileList;
-          fileList = fileList.slice(-1);
-        },
+        onChange: this.handleChange
       };
 
       const submitFormLayout = {
@@ -201,7 +189,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
 
           <Form.Item label="模版封面页">
             {getFieldDecorator('file')(
-              <Upload {...fileprops}>
+              <Upload {...fileprops} fileList={this.state.fileList} key={Math.random()}>
                 <Button>
                   <Icon type="upload" /> 上传
               </Button>

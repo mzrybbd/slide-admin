@@ -121,9 +121,12 @@ const Model = {
         message.success('修改成功')
       } else if (response.errorCode === 100002) {
         message.warning('课程模板名称已存在')
-      }
-      else if (response.errorCode === 100001) {
+      } else if (response.errorCode === 100001) {
         message.warning('课程模板名称已被引用，无法禁用')
+      } else if (response.errorCode === 100003) {
+        message.warning('Uuid与当前课程模版不符')
+      }else {
+        message.warning('操作失败')
       }
     },
     *copyT({ payload }, { call, put }) {
