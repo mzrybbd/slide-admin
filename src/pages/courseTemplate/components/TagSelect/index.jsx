@@ -47,7 +47,6 @@ class TagSelect extends Component {
 
   onChange = value => {
     const { onChange, hideCheckAll } = this.props;
-    console.log(value)
     if (!('value' in this.props)) {
       this.setState({
         value,

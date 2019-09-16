@@ -23,24 +23,23 @@ import EditTemplate from './Editor';
 export const UpdateFrom = Form.create({ name: 'update_form' })(
 
   class extends React.Component {
-    static getDerivedStateFromProps(props, state) {
-        return {
-          fileList1: [
-            {
-              uid: "-1",
-              status: "done",
-              name: props.formList.previewImg,
-              url: props.formList.previewImg
-            }
-          ]
-        }
-    };
+    // static getDerivedStateFromProps(props, state) {
+    //     return {
+    //       fileList1: props.formList.previewImg ? [
+    //         {
+    //           uid: "-1",
+    //           status: "done",
+    //           name: props.formList.previewImg,
+    //           url: props.formList.previewImg
+    //         }
+    //       ] : []
+    //     }
+    // };
     constructor(props) {
       super(props);
       this.state = {
         id: props.formList.subjectProductId,
         loading: false,
-        fileList1: [],
         fileList: props.formList.previewImg ? [
           {
             uid: "-1",
@@ -98,23 +97,18 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : this.state.id)
           formData.append('skin', form.skin || '')
           formData.append('style', form.style || '')
-          console.log('外侧', form.file)
 
           if (!!form.file) {
-            console.log(form.file)
             if(form.file.fileList.length >= 1){
               formData.append('file', form.file.fileList.pop().originFileObj)
             }
           }
-          // if (form.file.fileList > 1) {
-          //   formData.append('file', form.file.fileList.pop().originFileObj )
-          // }
+
           if (!!form.file) {
             if(form.file.fileList.length > 1){
               formData.append('file', form.file.fileList.pop().originFileObj)
             }
           }
-          console.log('===', form)
 
           this.props.dispatch({
             type: 'listSearchProjects/putT',
@@ -148,7 +142,6 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       } = this.props;
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
       let subjectId = [].concat(formList.subjectProductId)
-      console.log()
 
       const formItemLayout = {
         labelCol: {
@@ -282,9 +275,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             )}
           </Form.Item>
           <Form.Item label="模版封面页">
-            {getFieldDecorator('file', {
-              initialValue: this.state.fileList
-            })(
+            {getFieldDecorator('file')(
               <Upload {...fileprops}  fileList={this.state.fileList}  key={Math.random()}>
                 <Button>
                   <Icon type="upload" /> 上传

@@ -43,7 +43,6 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       let fileList = [...info.fileList];
       fileList = fileList.slice(-1);
       fileList = fileList.map(file => {
-        console.log('...', file)
         if (file.response) {
           file.url = file.response.url;
         }
@@ -51,7 +50,6 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       });
 
       this.setState({ fileList });
-      console.log('state' ,this.state.fileList)
     };
     handleRemove = info => {
       this.setState({fileList: []})

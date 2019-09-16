@@ -73,9 +73,7 @@ class Projects extends Component {
         form = values;
 
         let formData = new FormData()
-        console.log(form.file)
         if (!!form.file) {
-          console.log(form.file.fileList)
           if(form.file.fileList.length >= 1){
             formData.append('file', form.file.fileList.pop().originFileObj)
           }
@@ -133,7 +131,7 @@ class Projects extends Component {
         } = this.props;
         const { yearList = [], termMap = {} } = staticData
         const gradeList = grade3.map(item => item.id)
-        console.log(gradeList, grade3)
+        // console.log(gradeList, grade3)
         dispatch({
           type: 'listSearchProjects/queryFilterList',
           payload: {
