@@ -39,7 +39,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade2.map(item => item.id) })
     }
-    handleChange = info => {
+     handleChange =  info => {
       let fileList = [...info.fileList];
       fileList = fileList.slice(-1);
       fileList = fileList.map(file => {
@@ -105,7 +105,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
 
         beforeUpload: file => {
           this.setState(({ fileList }) => ({
-            fileData: [...fileList, file],
+            fileList: [...fileList, file],
           }))
           return false;
         },

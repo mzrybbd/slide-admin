@@ -23,23 +23,27 @@ import EditTemplate from './Editor';
 export const UpdateFrom = Form.create({ name: 'update_form' })(
 
   class extends React.Component {
-    // static getDerivedStateFromProps(props) {
-    //   return {
-    //     fileList: [
-    //       {
-    //         uid: "-1",
-    //         status: "done",
-    //         name: props.formList.previewImg,
-    //         url: props.formList.previewImg
-    //       }
-    //     ]
-    //   }
-    // };
+    static getDerivedStateFromProps(props) {
+      if( props.formList.previewImg){
+        return {
+          fileList1: [
+            {
+              uid: "-1",
+              status: "done",
+              name: props.formList.previewImg,
+              url: props.formList.previewImg
+            }
+          ]
+        }
+      }
+      return null;
+    };
     constructor(props) {
       super(props);
       this.state = {
         id: props.formList.subjectProductId,
         loading: false,
+        fileList: [],
         fileList: [
           {
             uid: "-1",
@@ -82,6 +86,9 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       if (!isLt2M) {
         message.error('封面图必须小于10MB!');
       }
+      this.setState(({ fileList }) => ({
+        fileList: [...fileList, file],
+      }))
       return false;
     }
     updateTemplate = e => {
@@ -95,9 +102,10 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           let formData = new FormData()
           console.log(form, this.props.formList.subjectProductId, this.state.id)
           if (form.file) {
-            form.file.fileList.forEach((fileBlob) => {
-              formData.append('file', fileBlob.originFileObj)
-            })
+            formData.append('file', form.file.fileList.pop().originFileObj)
+            // form.file.fileList.forEach((fileBlob) => {
+            //   formData.append('file', fileBlob.originFileObj)
+            // })
           }
           formData.append('id', this.props.url)
           formData.append('title', form.title)
@@ -278,7 +286,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           </Form.Item>
           <Form.Item label="模版封面页">
             {getFieldDecorator('file', {
-              initialValue: this.state.fileList
+              initialValue: this.state.fileList1
             })(
               <Upload {...fileprops} fileList={this.state.fileList} key={Math.random()}>
                 <Button>

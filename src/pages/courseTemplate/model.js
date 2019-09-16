@@ -88,11 +88,11 @@ const Model = {
     },
     *createT({ payload }, { call, put }) {
       const response = yield call(createTemplate, payload);
+      yield put({
+        type: 'createTemplate',
+        payload: response
+      });
       if (response.status === 1 && response.errorCode === 0) {
-        yield put({
-          type: 'createTemplate',
-          payload: response
-        });
         message.success('创建成功')
         // router.push('/courseTemplate/' + response.body)
       } else if (response.errorCode === 100002) {

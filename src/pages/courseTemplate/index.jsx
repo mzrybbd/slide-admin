@@ -75,9 +75,11 @@ class Projects extends Component {
       let formData = new FormData()
       console.log(form)
       if (form.file) {
-        form.file.fileList.forEach((fileBlob) => {
-          formData.append('file', fileBlob.originFileObj)
-        })
+        formData.append('file', form.file.fileList.pop().originFileObj)
+
+        // form.file.fileList.forEach((fileBlob) => {
+        //   formData.append('file', fileBlob.originFileObj)
+        // })
       }
       formData.append('title', form.title)
       formData.append('gradeList', form.gradeList.toString())
@@ -88,7 +90,8 @@ class Projects extends Component {
       dispatch({
         type: 'listSearchProjects/createT',
         payload: formData,
-      }).then(() => {
+      }).then((res) => {
+        console.log(res, this.props, 'hhx.')
         const {
           listSearchProjects: { createRes = {} },
         } = this.props;
