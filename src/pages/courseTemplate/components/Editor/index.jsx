@@ -58,15 +58,6 @@ export default class EditTemplate extends React.Component {
       },
     });
   }
-  update() {
-    console.log('updateupdateupdate')
-    dispatch({
-      type: 'listSearchProjects/queryT',
-      payload: {
-        id: this.props.match.params.id
-      },
-    })
-  }
   updateTemplate = e => {
     e.preventDefault();
     let demo = this.refs.getFormValue;
@@ -92,7 +83,8 @@ export default class EditTemplate extends React.Component {
         formData.append('style', form.style || '')
         if (!!form.file && form.file.fileList) {
           if (form.file.fileList.length >= 1) {
-            formData.append('file', form.file.fileList.pop().originFileObj)
+            let file = form.file.fileList[form.file.fileList.length - 1]
+            formData.append('file', file.originFileObj)
           }
         }
         dispatch({
@@ -100,7 +92,6 @@ export default class EditTemplate extends React.Component {
           payload: formData,
         }).then(() => {
           const { listSearchProjects: { putDetailRes = {} } } = this.props;
-          console.log(putDetailRes)
           if (putDetailRes.status === 1 && putDetailRes.errorCode === 0) {
             dispatch({
               type: 'listSearchProjects/queryT',

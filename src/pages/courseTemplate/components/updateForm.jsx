@@ -130,13 +130,8 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       const { defaultFileList } = this.state
 
       const fileprops = {
-        defaultFileList: this.props.de,
         accept: 'image/*',
-        beforeUpload: file => {
-          console.log(file, this.state.fileList)
-
-          return false;
-        },
+        beforeUpload: this.beforeUpload,
         onChange: this.handleChange,
         onRemove: this.handleRemove
       };

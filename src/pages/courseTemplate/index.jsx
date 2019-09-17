@@ -74,8 +74,9 @@ class Projects extends Component {
 
         let formData = new FormData()
         if (!!form.file) {
-          if(form.file.fileList.length >= 1){
-            formData.append('file', form.file.fileList.pop().originFileObj)
+          if (form.file.fileList.length >= 1) {
+            let file = form.file.fileList[form.file.fileList.length - 1]
+            formData.append('file', file.originFileObj)
           }
         }
 
@@ -131,7 +132,6 @@ class Projects extends Component {
         } = this.props;
         const { yearList = [], termMap = {} } = staticData
         const gradeList = grade3.map(item => item.id)
-        // console.log(gradeList, grade3)
         dispatch({
           type: 'listSearchProjects/queryFilterList',
           payload: {
@@ -410,16 +410,16 @@ class Projects extends Component {
           </Button>
         </Card>
         {
-          this.state.visible && (        
-          <Modal
-            title="新建课程模版"
-            visible={this.state.visible}
-            onOk={this.handleCreate}
-            onCancel={this.handleCancel}
-            centered
-          >
-            <CreateFrom ref="getFormValue" ></CreateFrom>
-          </Modal>)
+          this.state.visible && (
+            <Modal
+              title="新建课程模版"
+              visible={this.state.visible}
+              onOk={this.handleCreate}
+              onCancel={this.handleCancel}
+              centered
+            >
+              <CreateFrom ref="getFormValue" ></CreateFrom>
+            </Modal>)
         }
 
         <div className={styles.cardList}>{cardList}</div>
