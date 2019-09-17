@@ -13,7 +13,8 @@ import router from 'umi/router';
 
 export default class EditTemplate extends React.Component {
   state = {
-    flag: true
+    flag: true,
+    fileList: []
   }
   columns = [
     {
@@ -57,6 +58,58 @@ export default class EditTemplate extends React.Component {
       },
     });
   }
+  update() {
+    console.log('updateupdateupdate')
+    dispatch({
+      type: 'listSearchProjects/queryT',
+      payload: {
+        id: this.props.match.params.id
+      },
+    })
+  }
+  updateTemplate = e => {
+    e.preventDefault();
+    let demo = this.refs.getFormValue;
+    let form = {}
+    const { listSearchProjects: { edit = {} }, dispatch} = this.props;
+    const { subjectProductId } = edit
+    
+    demo.validateFields((err, values) => {
+      if (!err) {
+        form = values
+        let formData = new FormData()
+        formData.append('id', this.props.match.params.id)
+        formData.append('title', form.title)
+        formData.append('gradeList', form.gradeList.toString())
+        formData.append('yearList', form.yearList.toString())
+        formData.append('termList', form.termList.toString())
+        formData.append('inverted', !!form.inverted)
+        if (form.deckUuid) {
+          formData.append('deckUuid', form.deckUuid)
+        }
+        formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : edit.subjectProductId)
+        formData.append('skin', form.skin || '')
+        formData.append('style', form.style || '')
+        if (!!form.file && form.file.fileList) {
+          if (form.file.fileList.length >= 1) {
+            formData.append('file', form.file.fileList.pop().originFileObj)
+          }
+        }
+        dispatch({
+          type: 'listSearchProjects/putT',
+          payload: formData,
+        }).then(() => {
+          dispatch({
+            type: 'listSearchProjects/queryT',
+            payload: {
+              id: this.props.match.params.id
+            },
+          });
+        })
+        
+      }
+    });
+  };
   componentDidMount() {
     const { dispatch } = this.props;
 
@@ -90,6 +143,19 @@ export default class EditTemplate extends React.Component {
   render() {
     const { visible, onCancel, onCreate, form, listSearchProjects: { edit = {} }, } = this.props;
     const { templateVoList, referenced, subjectProductId } = edit
+    let fileList =  edit.previewImg ? [
+      {
+        uid: "-1",
+        status: "done",
+        name: edit.previewImg,
+        url: edit.previewImg
+      }
+    ] : [{
+      uid: "-2",
+      status: "done",
+      name: ',',
+      url: ''
+    }]
     return (
       <div>
         <Breadcrumb>
@@ -101,7 +167,7 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        {this.state.flag && (<UpdateFrom ref="getFormValue" id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit}></UpdateFrom>)}
+        {this.state.flag && (<UpdateFrom ref="getFormValue" fileList={fileList} id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit} updateTemplate={this.updateTemplate}></UpdateFrom>)}
         <h2>模版课件页</h2>
         <Table
           dataSource={templateVoList}

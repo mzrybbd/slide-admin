@@ -28,9 +28,15 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       this.state = {
         id: props.formList.subjectProductId,
         loading: false,
-        fileList: []
+        file: props.fileList,
+        fileList: props.fileList,
+        defaultFileList: [{
+          uid: "-2",
+          status: "done",
+          name: '',
+          url: ','
+        }]
       }
-      // form.setFieldsValue({ file: this.state.fileList })
     }
 
     handleChange = info => {
@@ -42,21 +48,32 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
         }
         return file;
       });
-      this.props.form.setFieldsValue({ file: this.state.fileList })
       this.setState({ fileList });
     };
     handleRemove = info => {
-      this.setState({ fileList: [] })
+      this.setState({ fileList: this.state.defaultFileList })
     }
     beforeUpload = file => {
       const isLt2M = file.size / 1024 / 1024 < 10;
       if (!isLt2M) {
-        message.error('封面图必须小于10MB!');
+        message.error('封面图必须大于10MB!');
       }
-      this.setState(({ fileList }) => ({
-        fileList: [...fileList, file],
-      }))
       return false;
+    }
+
+    componentWillReceiveProps(nextProps) {
+      const { file, defaultFileList } = this.state
+      const fatherFileList = nextProps.fileList
+      if (!file.length || file[0].name !== fatherFileList[0].name) {
+        this.setState({
+          fileList: fatherFileList,
+          file: fatherFileList
+        })
+      }
+      return true;
+    }
+    componentDidMount() {
+
     }
     updateTemplate = e => {
       let form = {}
@@ -78,8 +95,8 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : this.state.id)
           formData.append('skin', form.skin || '')
           formData.append('style', form.style || '')
-
-          if (!!form.file) {
+          console.log(form.file)
+          if (!!form.file && form.file.fileList) {
             if (form.file.fileList.length >= 1) {
               formData.append('file', form.file.fileList.pop().originFileObj)
             }
@@ -89,6 +106,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             type: 'listSearchProjects/putT',
             payload: formData,
           })
+          this.props.update()
         }
       });
     };
@@ -103,18 +121,6 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
         },
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade1.map(item => item.id) })
-    }
-    componentDidMount() {
-      this.setState({
-        fileList: this.props.formList.previewImg ? [
-          {
-            uid: "-1",
-            status: "done",
-            name: this.props.formList.previewImg,
-            url: this.props.formList.previewImg
-          }
-        ] : []
-      })
     }
 
     render() {
@@ -132,6 +138,11 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       let value = subjectProductList.filter((item, index) => {
         return item.id == subjectId
       })
+
+      let fileList = []
+      if (this.state.fileList.length) {
+        fileList = this.state.fileList[0].name !== ',' ? this.state.fileList : []
+      }
 
       const formItemLayout = {
         labelCol: {
@@ -156,9 +167,11 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           <div className="ant-upload-text">上传</div>
         </div>
       );
+      const { defaultFileList } = this.state
+
       const fileprops = {
+        defaultFileList: this.props.de,
         accept: 'image/*',
-        defaultFileList: this.state.fileList,
         beforeUpload: file => {
           console.log(file, this.state.fileList)
 
@@ -172,7 +185,6 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           {!reference && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId', {
               rules: [{ required: true, message: '请选择学科' }],
-              rules: [{ required: true, message: '请选择学科' }],
               initialValue: [].concat(formList.subjectProductId)
             })(
               <Select placeholder="请选择学科" onChange={(tag) => this.changeGradeList(tag)}>
@@ -184,7 +196,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
           </Form.Item>)}
           {reference && value[0] && (<Form.Item label="学科" >
             {getFieldDecorator('subjectProductId')(
-              <span className="ant-form-text">{ value[0].name }</span>
+              <span className="ant-form-text">{value[0].name}</span>
             )}
           </Form.Item>)}
           <Form.Item label="年级" >
@@ -264,10 +276,8 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             )}
           </Form.Item>
           <Form.Item label="模版封面页">
-            {getFieldDecorator('file', {
-               initialValue: this.state.fileList
-            })(
-              <Upload {...fileprops} fileList={this.state.fileList}>
+            {getFieldDecorator('file')(
+              <Upload {...fileprops} fileList={fileList}>
                 <Button>
                   <Icon type="upload" /> 上传
                  </Button>
@@ -275,7 +285,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             )}
           </Form.Item>
           <Form.Item {...submitFormLayout}>
-            <Button type="primary" onClick={this.updateTemplate}>
+            <Button type="primary" onClick={this.props.updateTemplate}>
               提交
           </Button>
           </Form.Item>

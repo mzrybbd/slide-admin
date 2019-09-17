@@ -113,11 +113,11 @@ const Model = {
     },
     *putT({ payload }, { call, put }) {
       const response = yield call(putTemplate, payload);
+      yield put({
+        type: 'putTemplate',
+        payload: response.body
+      });
       if (response.status === 1 && response.errorCode === 0) {
-        yield put({
-          type: 'putTemplate',
-          payload: response.body
-        });
         message.success('修改成功')
       } else if (response.errorCode === 100002) {
         message.warning('课程模板名称已存在')
