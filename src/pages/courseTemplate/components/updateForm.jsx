@@ -12,10 +12,9 @@ import {
 } from 'antd';
 import React, { Component } from 'react';
 import { CompactPicker } from 'react-color'
-import CoverPage from './coverPage';
 const { TextArea } = Input
 import { connect } from 'dva';
-import EditTemplate from './Editor';
+
 @connect(({ listSearchProjects, loading }) => ({
   listSearchProjects,
   loading: loading.models.listSearchProjects,
@@ -26,7 +25,6 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
     constructor(props) {
       super(props);
       this.state = {
-        id: props.formList.subjectProductId,
         loading: false,
         file: props.fileList,
         fileList: props.fileList,
@@ -72,44 +70,6 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       }
       return true;
     }
-    componentDidMount() {
-
-    }
-    updateTemplate = e => {
-      let form = {}
-      e.preventDefault();
-      let { id, formList1 } = this.state
-      this.props.form.validateFields((err, values) => {
-        if (!err) {
-          form = values
-          let formData = new FormData()
-          formData.append('id', this.props.url)
-          formData.append('title', form.title)
-          formData.append('gradeList', form.gradeList.toString())
-          formData.append('yearList', form.yearList.toString())
-          formData.append('termList', form.termList.toString())
-          formData.append('inverted', !!form.inverted)
-          if (form.deckUuid) {
-            formData.append('deckUuid', form.deckUuid)
-          }
-          formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : this.state.id)
-          formData.append('skin', form.skin || '')
-          formData.append('style', form.style || '')
-          console.log(form.file)
-          if (!!form.file && form.file.fileList) {
-            if (form.file.fileList.length >= 1) {
-              formData.append('file', form.file.fileList.pop().originFileObj)
-            }
-          }
-
-          this.props.dispatch({
-            type: 'listSearchProjects/putT',
-            payload: formData,
-          })
-          this.props.update()
-        }
-      });
-    };
 
     async changeGradeList(tag) {
       const { dispatch, form } = this.props;

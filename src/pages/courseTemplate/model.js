@@ -115,7 +115,7 @@ const Model = {
       const response = yield call(putTemplate, payload);
       yield put({
         type: 'putTemplate',
-        payload: response.body
+        payload: response
       });
       if (response.status === 1 && response.errorCode === 0) {
         message.success('修改成功')

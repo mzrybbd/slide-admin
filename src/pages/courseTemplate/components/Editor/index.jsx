@@ -71,9 +71,9 @@ export default class EditTemplate extends React.Component {
     e.preventDefault();
     let demo = this.refs.getFormValue;
     let form = {}
-    const { listSearchProjects: { edit = {} }, dispatch} = this.props;
+    const { listSearchProjects: { edit = {} }, dispatch } = this.props;
     const { subjectProductId } = edit
-    
+
     demo.validateFields((err, values) => {
       if (!err) {
         form = values
@@ -99,14 +99,18 @@ export default class EditTemplate extends React.Component {
           type: 'listSearchProjects/putT',
           payload: formData,
         }).then(() => {
-          dispatch({
-            type: 'listSearchProjects/queryT',
-            payload: {
-              id: this.props.match.params.id
-            },
-          });
+          const { listSearchProjects: { putDetailRes = {} } } = this.props;
+          console.log(putDetailRes)
+          if (putDetailRes.status === 1 && putDetailRes.errorCode === 0) {
+            dispatch({
+              type: 'listSearchProjects/queryT',
+              payload: {
+                id: this.props.match.params.id
+              },
+            });
+          }
         })
-        
+
       }
     });
   };
@@ -143,7 +147,7 @@ export default class EditTemplate extends React.Component {
   render() {
     const { visible, onCancel, onCreate, form, listSearchProjects: { edit = {} }, } = this.props;
     const { templateVoList, referenced, subjectProductId } = edit
-    let fileList =  edit.previewImg ? [
+    let fileList = edit.previewImg ? [
       {
         uid: "-1",
         status: "done",
@@ -167,7 +171,7 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        {this.state.flag && (<UpdateFrom ref="getFormValue" fileList={fileList} id={subjectProductId} url={this.props.match.params.id} reference={referenced} formList={edit} updateTemplate={this.updateTemplate}></UpdateFrom>)}
+        {this.state.flag && (<UpdateFrom ref="getFormValue" fileList={fileList} id={subjectProductId} reference={referenced} formList={edit} updateTemplate={this.updateTemplate}></UpdateFrom>)}
         <h2>模版课件页</h2>
         <Table
           dataSource={templateVoList}

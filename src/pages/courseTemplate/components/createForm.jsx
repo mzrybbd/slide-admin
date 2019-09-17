@@ -12,7 +12,6 @@ import {
 } from 'antd';
 import React, { Component } from 'react';
 import { CompactPicker } from 'react-color'
-import CoverPage from './coverPage';
 const { TextArea } = Input
 import { connect } from 'dva';
 
