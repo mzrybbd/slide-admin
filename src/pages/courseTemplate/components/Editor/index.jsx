@@ -74,9 +74,7 @@ export default class EditTemplate extends React.Component {
 
     demo.validateFields((err, values) => {
       if (!err) {
-        this.setState({
-          confirmLoading: true,
-        });
+        
         form = values
         let formData = new FormData()
         formData.append('id', this.props.match.params.id)
@@ -88,8 +86,8 @@ export default class EditTemplate extends React.Component {
         if (form.deckUuid) {
           formData.append('deckUuid', form.deckUuid)
         }
-        console.log(edit.subjectProductId ,form.subjectProductId)
-        let subjectId = form.subjectProductId ? form.subjectProductId.toString() : edit.subjectProductId
+        console.log(edit.subjectProductId, form.subjectProductId, edit.referenced)
+        let subjectId = edit.referenced ? edit.subjectProductId : form.subjectProductId.toString() 
         formData.append('subjectProductId', subjectId)
         console.log(subjectId)
         formData.append('skin', form.skin || '')
@@ -100,7 +98,9 @@ export default class EditTemplate extends React.Component {
             formData.append('file', file.originFileObj)
           }
         }
-
+        this.setState({
+          confirmLoading: true,
+        });
         dispatch({
           type: 'listSearchProjects/putT',
           payload: formData,
