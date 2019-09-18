@@ -45,6 +45,7 @@ class Projects extends Component {
     visible: false,
     current: 1,
     flag: true,
+    confirmLoading: false
   };
 
   editTemplate = id => {
@@ -71,7 +72,9 @@ class Projects extends Component {
     demo.validateFields((err, values) => {
       if (!err) {
         form = values;
-
+        this.setState({
+          confirmLoading: true,
+        });
         let formData = new FormData()
         if (!!form.file) {
           if (form.file.fileList.length >= 1) {
@@ -97,8 +100,13 @@ class Projects extends Component {
             demo.resetFields()
             this.setState({
               visible: false,
+              confirmLoading: false
             });
             getData(this.props, this.props.form.getFieldsValue())
+          }else {
+            this.setState({
+              confirmLoading: false
+            });
           }
         });
       }
@@ -417,6 +425,7 @@ class Projects extends Component {
               onOk={this.handleCreate}
               onCancel={this.handleCancel}
               centered
+              confirmLoading={this.state.confirmLoading}
             >
               <CreateFrom ref="getFormValue" ></CreateFrom>
             </Modal>)
