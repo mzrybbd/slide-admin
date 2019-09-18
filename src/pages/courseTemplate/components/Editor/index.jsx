@@ -14,7 +14,8 @@ import router from 'umi/router';
 export default class EditTemplate extends React.Component {
   state = {
     flag: true,
-    fileList: []
+    fileList: [],
+    confirmLoading: false
   }
   columns = [
     {
@@ -67,6 +68,9 @@ export default class EditTemplate extends React.Component {
 
     demo.validateFields((err, values) => {
       if (!err) {
+        this.setState({
+          confirmLoading: true,
+        });
         form = values
         let formData = new FormData()
         formData.append('id', this.props.match.params.id)
@@ -93,15 +97,21 @@ export default class EditTemplate extends React.Component {
         }).then(() => {
           const { listSearchProjects: { putDetailRes = {} } } = this.props;
           if (putDetailRes.status === 1 && putDetailRes.errorCode === 0) {
+            this.setState({
+              confirmLoading: false
+            });
             dispatch({
               type: 'listSearchProjects/queryT',
               payload: {
                 id: this.props.match.params.id
               },
             });
+          }else {
+            this.setState({
+              confirmLoading: false
+            });
           }
         })
-
       }
     });
   };
@@ -162,7 +172,7 @@ export default class EditTemplate extends React.Component {
           </Breadcrumb.Item>
         </Breadcrumb>
         <h2>课件模版属性</h2>
-        {this.state.flag && (<UpdateFrom ref="getFormValue" fileList={fileList} id={subjectProductId} reference={referenced} formList={edit} updateTemplate={this.updateTemplate}></UpdateFrom>)}
+        {this.state.flag && (<UpdateFrom confirmLoading={this.state.confirmLoading} ref="getFormValue" fileList={fileList} id={subjectProductId} reference={referenced} formList={edit} updateTemplate={this.updateTemplate}></UpdateFrom>)}
         <h2>模版课件页</h2>
         <Table
           dataSource={templateVoList}

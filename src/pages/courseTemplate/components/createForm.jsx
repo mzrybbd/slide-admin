@@ -107,7 +107,7 @@ export const CreateFrom = Form.create({ name: 'create_form' })(
         beforeUpload: file => {
           const isLt2M = file.size / 1024 / 1024 < 10;
           if (!isLt2M) {
-            message.error('封面图必须大于10MB!');
+            message.error('封面图必须小于10MB!');
           }
           return false;
         },

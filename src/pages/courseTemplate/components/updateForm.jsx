@@ -54,7 +54,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
     beforeUpload = file => {
       const isLt2M = file.size / 1024 / 1024 < 10;
       if (!isLt2M) {
-        message.error('封面图必须大于10MB!');
+        message.error('封面图必须小于10MB!');
       }
       return false;
     }
@@ -82,7 +82,11 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       });
       form.setFieldsValue({ gradeList: this.props.listSearchProjects.grade1.map(item => item.id) })
     }
-
+    componentWillUnmount = () => {
+      this.setState = (state, callback) => {
+        return;
+      };
+    }
     render() {
       const { form, reference, formList, onUpdate, id } = this.props;
       const { getFieldDecorator } = form;
@@ -92,13 +96,14 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
         visible,
         onCancel,
         onCreate,
+        confirmLoading
       } = this.props;
       const { subjectProductList = [], yearList = [], termMap = {} } = staticData
       let subjectId = [].concat(formList.subjectProductId)
       let value = subjectProductList.filter((item, index) => {
         return item.id == subjectId
       })
-
+      
       let fileList = []
       if (this.state.fileList.length) {
         fileList = this.state.fileList[0].name !== ',' ? this.state.fileList : []
@@ -240,7 +245,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
             )}
           </Form.Item>
           <Form.Item {...submitFormLayout}>
-            <Button type="primary" onClick={this.props.updateTemplate}>
+            <Button type="primary" onClick={this.props.updateTemplate} loading={confirmLoading}>
               提交
           </Button>
           </Form.Item>
