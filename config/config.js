@@ -166,17 +166,17 @@ export default {
   chainWebpack: webpackPlugin,
   proxy: {
     '/structureTempApi/toolbarInfo/subjectProducts': {
-      target: 'http://10.10.4.65/structureTempApi/toolbarInfo/subjectProducts/',
+      target: 'http://admin.slide.aixuexi.com/structureTempApi/toolbarInfo/subjectProducts/',
       changeOrigin: true,
       pathRewrite: { '^/structureTempApi/toolbarInfo/subjectProducts': '' },
     },
     '/structureTempApi/structureTemps': {
-      target: 'http://10.10.4.65/structureTempApi/structureTemps',
+      target: 'http://admin.slide.aixuexi.com/structureTempApi/structureTemps',
       changeOrigin: true,
       pathRewrite: { '^/structureTempApi/structureTemps': '' },
     },
     '/structureTempEditor/structureTemps': {
-      target: 'http://10.10.4.65/structureTempEditor/structureTemps/',
+      target: 'http://admin.slide.aixuexi.com/structureTempEditor/structureTemps/',
       changeOrigin: true,
       pathRewrite: { '^/structureTempEditor/structureTemps': '' },
     }

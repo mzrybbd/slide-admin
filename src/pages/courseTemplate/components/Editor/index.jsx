@@ -88,7 +88,10 @@ export default class EditTemplate extends React.Component {
         if (form.deckUuid) {
           formData.append('deckUuid', form.deckUuid)
         }
-        formData.append('subjectProductId', form.subjectProductId ? form.subjectProductId.toString() : edit.subjectProductId)
+        console.log(edit.subjectProductId ,form.subjectProductId)
+        let subjectId = form.subjectProductId ? form.subjectProductId.toString() : edit.subjectProductId
+        formData.append('subjectProductId', subjectId)
+        console.log(subjectId)
         formData.append('skin', form.skin || '')
         formData.append('style', form.style || '')
         if (!!form.file && form.file.fileList) {
@@ -97,6 +100,7 @@ export default class EditTemplate extends React.Component {
             formData.append('file', file.originFileObj)
           }
         }
+
         dispatch({
           type: 'listSearchProjects/putT',
           payload: formData,
