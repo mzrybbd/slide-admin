@@ -16,6 +16,10 @@ let pageNo = 1;
 
 const getData = (props, values) => {
   let form = {}
+  let item = Object.keys(values).toString()
+  if(item === 'subjectList') {
+    return;
+  }
   props.form.validateFields((err, obj) => {
     if (!err) {
       form = Object.assign(obj, values);
