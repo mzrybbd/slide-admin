@@ -44,20 +44,26 @@ export default class EditTemplate extends React.Component {
   ];
 
   putStatus = (record) => {
-    this.props.dispatch({
+    const { dispatch, match } = this.props
+    dispatch({
       type: 'listSearchProjects/putAnyS',
       payload: {
         id: this.props.match.params.id,
         type: record.type,
         status: (record.status) ? 0 : 1
       },
+    }).then(() => {
+      const { listSearchProjects: { putAnyRes = {} }, dispatch } = this.props;
+      if (putAnyRes.code === 200) {
+        dispatch({
+          type: 'listSearchProjects/queryT',
+          payload: {
+            id: match.params.id
+          },
+        });
+      }
     })
-    this.props.dispatch({
-      type: 'listSearchProjects/queryT',
-      payload: {
-        id: this.props.match.params.id
-      },
-    });
+
   }
   updateTemplate = e => {
     e.preventDefault();
@@ -106,7 +112,7 @@ export default class EditTemplate extends React.Component {
                 id: this.props.match.params.id
               },
             });
-          }else {
+          } else {
             this.setState({
               confirmLoading: false
             });

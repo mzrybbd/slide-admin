@@ -158,11 +158,11 @@ const Model = {
     },
     *putAnyS({ payload }, { call, put }) {
       const response = yield call(putAnyTemplate, payload);
+      yield put({
+        type: 'putAnyStatus',
+        payload: response
+      });
       if (response.code === 200) {
-        yield put({
-          type: 'putAnyStatus',
-          payload: response.body
-        });
         message.success('操作成功')
       } else if (response.code === 512) {
         message.error('模版元素为空，操作失败')
