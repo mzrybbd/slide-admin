@@ -49,7 +49,8 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       this.setState({ fileList });
     };
     handleRemove = info => {
-      this.setState({ fileList: this.state.defaultFileList })
+      return false;
+      // this.setState({ fileList: this.state.defaultFileList })
     }
     beforeUpload = file => {
       const isLt2M = file.size / 1024 / 1024 < 10;
@@ -103,7 +104,7 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
       let value = subjectProductList.filter((item, index) => {
         return item.id == subjectId
       })
-      
+
       let fileList = []
       if (this.state.fileList.length) {
         fileList = this.state.fileList[0].name !== ',' ? this.state.fileList : []
@@ -136,6 +137,10 @@ export const UpdateFrom = Form.create({ name: 'update_form' })(
 
       const fileprops = {
         accept: 'image/*',
+        showUploadList: {
+          showPreviewIcon: true, 
+          showRemoveIcon: false
+        },
         beforeUpload: this.beforeUpload,
         onChange: this.handleChange,
         onRemove: this.handleRemove
