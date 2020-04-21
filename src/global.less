@@ -28,7 +28,15 @@ ul,
 ol {
   list-style: none;
 }
-
+.required label::before {
+  display: inline-block;
+  margin-right: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}
 @media (max-width: @screen-xs) {
   .ant-table {
     width: 100%;
@@ -44,4 +52,9 @@ ol {
       }
     }
   }
+}
+
+.ant-radio-button-wrapper {
+  border-radius: 4px !important;
+  margin-right: 8px !important; 
 }

@@ -114,6 +114,12 @@ export default {
           component: './commentBlocks',
         },
         {
+          path: '/backStage',
+          name: 'backStage',
+          icon: 'setting',
+          component: './backStage',
+        },
+        {
           component: './404',
         },
       ],
@@ -179,6 +185,11 @@ export default {
       target: 'http://admin.slide.aixuexi.com/structureTempEditor/structureTemps/',
       changeOrigin: true,
       pathRewrite: { '^/structureTempEditor/structureTemps': '' },
+    },
+    '/game': {
+      traget: 'http://admin.slide.aixuexi.com/game',
+      changeOrigin: true,
+      pathRewrite: {'^/game': ''},
     }
   },
 };

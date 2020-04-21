@@ -49,7 +49,7 @@
     "moment": "^2.24.0",
     "omit.js": "^1.0.2",
     "path-to-regexp": "^3.0.0",
-    "qs": "^6.7.0",
+    "qs": "^6.9.3",
     "react": "^16.8.6",
     "react-color": "^2.17.3",
     "react-copy-to-clipboard": "^5.0.1",

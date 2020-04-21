@@ -3,6 +3,7 @@ export default {
   'menu.courseTemplate': '课程模版',
   'menu.contentTemplate': '内容模版',
   'menu.commentBlocks': '批注',
+  'menu.backStage': '后台上传',
   'menu.more-blocks': '更多区块',
   'menu.login': '登录',
   'menu.register': '注册',
