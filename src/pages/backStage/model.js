@@ -6,7 +6,7 @@ import { message } from 'antd';
 const Model = {
   namespace: 'game',
   state: {
-    gameList: [],
+    gameList: {},
     uploadGameRes: {},
     putGameRes: {}
   },
@@ -47,8 +47,8 @@ const Model = {
     },
   },
   reducers: {
-    putGameStatus(state, action) {
-      return { ...state, gameList: action.payload.body || []};
+    queryList(state, action) {
+      return { ...state, gameList: action.payload || {}};
     },
     uploadGame(state, action) {
       return { ...state, uploadGameRes: action.payload || {}};

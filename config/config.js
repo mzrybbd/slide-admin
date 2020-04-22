@@ -187,9 +187,9 @@ export default {
       pathRewrite: { '^/structureTempEditor/structureTemps': '' },
     },
     '/game': {
-      traget: 'http://admin.slide.aixuexi.com/game',
+      target: 'http://admin.slide.aixuexi.com/game',
       changeOrigin: true,
-      pathRewrite: {'^/game': ''},
-    }
+      pathRewrite: { '^/game': '' },
+    },
   },
 };

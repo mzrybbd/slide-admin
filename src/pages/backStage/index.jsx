@@ -9,6 +9,7 @@ import {
   message,
   Modal,
   Table,
+  Tag
 } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
@@ -16,6 +17,7 @@ import moment from 'moment';
 import router from 'umi/router';
 import styles from './style.less';
 import { UploadFile } from './createForm';
+import { timeFrom } from '../../utils/index.js';
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -50,7 +52,22 @@ class Projects extends Component {
       dataIndex: 'thumbnail',
       key: 'thumbnail',
       width: '25%',
-      render: text => <img src={text || 'http://storage.aixuexi.com/u/80etDFEzFb54'} style={{ width: '100%' }} />,
+      render: (text, record) => (
+        <>
+          {record.source === 1 ? (
+            <img
+              src={
+                record.replacement['images/thumb'] ||
+                record.cdnPath + '/images/thumb.png' ||
+                'http://storage.aixuexi.com/u/80etDFEzFb54'
+              }
+              style={{ width: '100%' }}
+            />
+          ) : (
+            <>fff</>
+          )}
+        </>
+      ),
     },
     { title: '游戏简介', dataIndex: 'gameDescription', key: 'gameDescription' },
     {
@@ -59,8 +76,18 @@ class Projects extends Component {
       key: 'source',
       render: text => (
         <>
-          {text === 1 && '睿泰'}
-          {text === 2 && '禾教'}
+          {/* {text === 1 && '睿泰'}
+          {text === 2 && '禾教'} */}
+          {text === 1 && (
+            <Tag color="#35C2D0">
+              睿泰
+            </Tag>
+          )}
+          {text === 2 && (
+            <Tag  color="#E7481F">
+              禾教
+            </Tag>
+          )}
         </>
       ),
     },
@@ -70,6 +97,7 @@ class Projects extends Component {
       key: 'type',
       render: text => (
         <>
+          
           {text === 1 && '模板'}
           {text === 2 && '成品'}
         </>
@@ -79,16 +107,19 @@ class Projects extends Component {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (text, record) => <>{record.enbled ? '启用中' : '禁用中'}</>,
+      render: (text, record) => <>{record.enabled ? '启用中' : '禁用中'}</>,
     },
-    { title: '上传时间', dataIndex: 'uploadTime', key: 'uploadTime' },
+    {
+      title: '上传时间',
+      dataIndex: 'uploadTime',
+      key: 'uploadTime',
+      render: text => timeFrom(text),
+    },
     {
       title: '操作',
-      key: 'enbled',
+      key: 'enabled',
       render: (text, record) => (
-        <Button type="link" size="small" onClick={this.toggleStatus.bind(this, record)}>
-          {!record.enbled ? '启用' : '禁用'}
-        </Button>
+        <a onClick={this.toggleStatus.bind(this, record)}>{!record.enabled ? '启用' : '禁用'}</a>
       ),
     },
   ];
@@ -133,7 +164,7 @@ class Projects extends Component {
       type: 'game/putStatus',
       payload: {
         id: record.id,
-        status: !!record.status ? 0 : 1,
+        status: !!record.enabled ? 0 : 1,
       },
     });
     this.init({
@@ -150,18 +181,8 @@ class Projects extends Component {
       game: { gameList },
     } = this.props;
     const table = {
-      dataSource: [
-        {
-          id: 1,
-          gameName: '测试测试测试测试测试',
-          enabled: true,
-          source: 1,
-          type: 1,
-          gameDescription: '测试测试测试测试测试试测试测试',
-          thumbnail: '',
-          uploadTime: '2010-09-01',
-        },
-      ],
+      rowKey: 'id',
+      dataSource: gameList.list,
       columns: this.columns,
       rowKey: 'id',
       loading: {

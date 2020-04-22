@@ -38,25 +38,25 @@ function getFakeList(req, res) {
 	return res.json(result);
 }
 
-export default {
-	'GET  /game/list?page=1&size=20': getFakeList,
-	'POST /game/upload': (req, res) => {
-		res.send({
-			"status": 1,
-			"errorCode": 0,
-			"errorMessage": "",
-			"body": 54327
-		});
-	},
-	'PUT /game/1/status/1': (req, res) => {
-		res.send({
-			"status": 1,
-			"errorCode": 0,
-			"errorMessage": "",
-			"body": {}
-		});
-	},
-};
+// export default {
+// 	'GET  /game/list?page=1&size=20': getFakeList,
+// 	'POST /game/upload': (req, res) => {
+// 		res.send({
+// 			"status": 1,
+// 			"errorCode": 0,
+// 			"errorMessage": "",
+// 			"body": 54327
+// 		});
+// 	},
+// 	'PUT /game/1/status/1': (req, res) => {
+// 		res.send({
+// 			"status": 1,
+// 			"errorCode": 0,
+// 			"errorMessage": "",
+// 			"body": {}
+// 		});
+// 	},
+// };
 
 
 
