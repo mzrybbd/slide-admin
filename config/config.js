@@ -81,6 +81,7 @@ export default {
     ie: 11,
   },
   devtool: isAntDesignProPreview ? 'source-map' : false,
+  outputPath: 'prod',
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
