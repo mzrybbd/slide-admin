@@ -1,0 +1,23 @@
+{
+  "/vendors.css": "/vendors.0b7b1ea9.chunk.css",
+  "/vendors.js": "/vendors.e3cd3a18.async.js",
+  "/layouts__BasicLayout.css": "/layouts__BasicLayout.bebf7813.chunk.css",
+  "/layouts__BasicLayout.js": "/layouts__BasicLayout.a66a1c67.async.js",
+  "/p__404.css": "/p__404.e611929f.chunk.css",
+  "/p__404.js": "/p__404.9ffe0d7b.async.js",
+  "/p__commentBlocks.css": "/p__commentBlocks.c466a1b9.chunk.css",
+  "/p__commentBlocks.js": "/p__commentBlocks.f587add5.async.js",
+  "/p__contentTemplate.js": "/p__contentTemplate.ae02d76c.async.js",
+  "/p__courseTemplate.css": "/p__courseTemplate.44bf8cdf.chunk.css",
+  "/p__courseTemplate.js": "/p__courseTemplate.3b3ddfe6.async.js",
+  "/p__courseTemplate__components__Editor.css": "/p__courseTemplate__components__Editor.3a7ab973.chunk.css",
+  "/p__courseTemplate__components__Editor.js": "/p__courseTemplate__components__Editor.ca258168.async.js",
+  "/p__courseTemplate__model.js.js": "/p__courseTemplate__model.js.26ed65a4.async.js",
+  "/umi.css": "/umi.26ca1018.css",
+  "/umi.js": "/umi.9668e770.js",
+  "/favicon.png": "/favicon.png",
+  "/icons/icon-128x128.png": "/icons/icon-128x128.png",
+  "/icons/icon-192x192.png": "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png": "/icons/icon-512x512.png",
+  "/index.html": "/index.html"
+}
