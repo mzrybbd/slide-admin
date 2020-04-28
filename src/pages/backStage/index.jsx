@@ -41,7 +41,6 @@ class Projects extends Component {
   state = {
     visible: false,
     current: 1,
-    currentPage: 1,
   };
 
   columns = [
@@ -64,7 +63,7 @@ class Projects extends Component {
               style={{ width: '100%' }}
             />
           ) : (
-            <>fff</>
+            <></>
           )}
         </>
       ),
@@ -135,10 +134,6 @@ class Projects extends Component {
     });
   };
 
-  change = () => {
-    pageNo = 1;
-  };
-
   componentDidMount() {
     this.init({
       page: pageNo,
@@ -151,10 +146,7 @@ class Projects extends Component {
       type: 'game/fetchList',
       payload: data,
     });
-    this.setState({ currentPage: 1 });
-    pageNo = 1;
   }
-  getData = () => {};
 
   toggleStatus = async record => {
     const { dispatch } = this.props;
@@ -168,7 +160,7 @@ class Projects extends Component {
       },
     });
     this.init({
-      page: 1,
+      page: pageNo,
       size: 20,
     });
   };

@@ -4,7 +4,6 @@ import { connect } from 'dva';
 const { Dragger } = Upload;
 @connect(({ game, loading }) => ({
   game,
-  confirmLoading: loading.effects['game/postUploadGame'],
 }))
 export const UploadFile = Form.create({ name: 'upload_file' })(
   
@@ -12,9 +11,9 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
     state = {
       fileList: [],
       file: {},
+      confirmLoading: false,
     };
     handleChange = info => {
-      console.log(info, 'info')
       if(!this.checkFile(info)) {
         return;
       }
@@ -48,11 +47,16 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
           for (let key in values) {
             if (key !== 'file' && key !== 'isIframe' ) formData.append(key, values[key]);
           }
+          this.setState({
+            confirmLoading: true
+          })
           await dispatch({
             type: 'game/postUploadGame',
             payload: formData,
           });
-
+          this.setState({
+            confirmLoading: false
+          })
           const {
             game: { uploadGameRes = {} },
           } = this.props;
@@ -106,7 +110,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
       if (value.trim().length === 0) {
         return callback('请输入游戏名称');
       } else if (value.trim().length > 10) {
-         callback('最多10个文字');
+         callback('最多10个字符');
       }
        callback();
     };
@@ -114,7 +118,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
       if (value.trim().length === 0) {
         return callback('请输入游戏简介');
       } else if (value.trim().length > 15) {
-         callback('最多15个文字');
+         callback('最多15个字符');
       }
        callback();
     };
@@ -131,7 +135,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
           md: { span: 18 },
         },
       };
-      const { confirmLoading, visible, onCancel, form } = this.props;
+      const { visible, onCancel, form } = this.props;
       const { getFieldDecorator } = form;
       const fileprops = {
         name: 'gameFile',
@@ -158,7 +162,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
           onOk={this.handleCreate.bind(this)}
           onCancel={onCancel}
           maskClosable={false}
-          confirmLoading={confirmLoading}
+          confirmLoading={this.state.confirmLoading}
           okText="确定"
           cancelText="取消"
         >
@@ -187,7 +191,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
                     validator: this.checkGameName,
                   },
                 ],
-              })(<Input placeholder="最多10个字" />)}
+              })(<Input placeholder="最多10个字符" />)}
             </Form.Item>
             <Form.Item label="游戏简介" className="required">
               {getFieldDecorator('gameDescription', {
@@ -197,7 +201,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
                     validator: this.checkGameDescription,
                   },
                 ],
-              })(<Input placeholder="最多15个字" />)}
+              })(<Input placeholder="最多15个字符" />)}
             </Form.Item>
             {
               <Form.Item label="来源">
