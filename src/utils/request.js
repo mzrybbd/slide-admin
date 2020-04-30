@@ -56,7 +56,7 @@ const errorHandler = error => {
 
 const request = extend({
   errorHandler,
-  // prefix: baseUrl,
+  prefix: baseUrl,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });

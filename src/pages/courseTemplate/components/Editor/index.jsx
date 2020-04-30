@@ -33,9 +33,9 @@ export default class EditTemplate extends React.Component {
       title: '操作',
       render: (text, record) => (
         <Fragment>
-          <a target='_blank' href={`http://slide.aixuexi.com/editor.html?themeId=${this.props.match.params.id}&tempType=${text.type}`}>编辑</a>
+          <a target='_blank' href={`http://slide.aixuexi.com/editor.html?themeId=${this.props.match.params.id}&tempType=${text.type}&from_v2=true`}>编辑</a>
           <Divider type="vertical" />
-          <a target='_blank' href={`http://slide.aixuexi.com/player.html?themeId=${this.props.match.params.id}&tempType=${text.type}`} onClick={this.redirect}>预览</a>
+          <a target='_blank' href={`http://slide.aixuexi.com/player.html?themeId=${this.props.match.params.id}&tempType=${text.type}&mode=question`} onClick={this.redirect}>预览</a>
           <Divider type="vertical" />
           <a onClick={() => this.putStatus(record)}>{text.status ? '禁用' : '启用'}</a>
         </Fragment>
