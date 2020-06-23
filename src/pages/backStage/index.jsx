@@ -9,16 +9,22 @@ import {
   message,
   Modal,
   Table,
-  Tag
+  Tag,
+  Input,
+  Divider,
 } from 'antd';
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import router from 'umi/router';
 import styles from './style.less';
+import StandardFormRow from '../courseTemplate/components/StandardFormRow';
+import TagSelect from '../courseTemplate/components/TagSelect';
+
 import { UploadFile } from './createForm';
 import { timeFrom } from '../../utils/index.js';
-
+import { values } from 'lodash';
+const { Search } = Input;
 const { Option } = Select;
 const FormItem = Form.Item;
 const { Paragraph } = Typography;
@@ -41,6 +47,8 @@ class Projects extends Component {
   state = {
     visible: false,
     current: 1,
+    queryObj: {},
+    default: true,
   };
 
   columns = [
@@ -53,7 +61,7 @@ class Projects extends Component {
       width: '25%',
       render: (text, record) => (
         <>
-          {record.source === 1 ? (
+          {record.source === 1 && record.type === 1 ? (
             <img
               src={
                 record.replacement['images/thumb'] ||
@@ -77,16 +85,8 @@ class Projects extends Component {
         <>
           {/* {text === 1 && '睿泰'}
           {text === 2 && '禾教'} */}
-          {text === 1 && (
-            <Tag color="#35C2D0">
-              睿泰
-            </Tag>
-          )}
-          {text === 2 && (
-            <Tag  color="#E7481F">
-              禾教
-            </Tag>
-          )}
+          {text === 1 && <Tag color="#35C2D0">睿泰</Tag>}
+          {text === 2 && <Tag color="#E7481F">禾教</Tag>}
         </>
       ),
     },
@@ -96,7 +96,6 @@ class Projects extends Component {
       key: 'type',
       render: text => (
         <>
-          
           {text === 1 && '模板'}
           {text === 2 && '成品'}
         </>
@@ -118,10 +117,25 @@ class Projects extends Component {
       title: '操作',
       key: 'enabled',
       render: (text, record) => (
-        <a onClick={this.toggleStatus.bind(this, record)}>{!record.enabled ? '启用' : '禁用'}</a>
+        <>
+          <a onClick={this.toggleStatus.bind(this, record)}>{!record.enabled ? '启用' : '禁用'}</a>
+          {record.isIframe && (
+            <>
+              {' '}
+              <Divider type="vertical" />{' '}
+              <a
+                target="_blank"
+                href={record.cdnPath + '/' + record.iframeIndex || 'http://baidu.com'}
+              >
+                {'查看'}
+              </a>
+            </>
+          )}
+        </>
       ),
     },
   ];
+
   showModal = () => {
     this.setState({
       visible: true,
@@ -151,7 +165,7 @@ class Projects extends Component {
   toggleStatus = async record => {
     const { dispatch } = this.props;
     const props = this.props;
-
+    const { formatValue } = this
     await dispatch({
       type: 'game/putStatus',
       payload: {
@@ -159,19 +173,58 @@ class Projects extends Component {
         status: !!record.enabled ? 0 : 1,
       },
     });
-    this.init({
-      page: pageNo,
-      size: 20,
+    this.props.form.validateFields((err, values) => {
+      this.init({
+        page: pageNo,
+        size: size,
+        ...formatValue(values)
+      });
     });
   };
+  formatValue(values) {
+    let res = {}
+    if(values['source'].length === 1){
+      res['source'] = values['source'].toString()
+    }
+    if(values['enabled'].length === 1){
+      res['enabled'] = values['enabled'].toString() == 1
+    }
+    if(values['gameName']) {
+      res['gameName'] = values['gameName'].trim()
+    }
+    return res;
+  }
   changePage = page => {
     pageNo = page;
-    this.init({ page: pageNo, size });
+    const { formatValue } = this
+
+    this.props.form.validateFields((err, values) => {
+      this.init({
+        page: pageNo,
+        size: size,
+        ...formatValue(values)
+      });
+    });
+  };
+  change = e => {
+    this.setState({ default: false });
+    const { formatValue } = this
+    pageNo = 1
+    this.props.form.validateFields((err, values) => {
+      this.init({
+        page: pageNo,
+        size: size,
+        ...formatValue(values)
+      });
+    });
   };
   render() {
     const {
       game: { gameList },
+      form,
     } = this.props;
+    const { getFieldDecorator } = form;
+
     const table = {
       rowKey: 'id',
       dataSource: gameList.list,
@@ -188,10 +241,98 @@ class Projects extends Component {
         defaultPageSize: size,
         total: gameList.itemTotal,
       },
+      locale: {
+        emptyText: this.state.default ? '暂无数据' : '没有搜索到结果',
+      },
     };
 
     return (
-      <div className={styles.coverCardList}>
+      <div>
+        <Card bordered={false} className={styles.filterBox}>
+          <Form layout="inline">
+            <FormItem className={styles.gameFilter}>
+              {getFieldDecorator('gameName')(
+                <Search
+                  placeholder="请输入游戏名称"
+                  enterButton="搜索"
+                  // onSearch={e => this.change(e)}
+                  onSearch={e => {
+                    this.setState({ queryObj: { ...this.state.queryObj, gameName: e } }, e => {
+                      this.change(e);
+                    });
+                  }}
+                />,
+              )}
+            </FormItem>
+            <StandardFormRow
+              title="来源"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('source', {
+                  initialValue: [1, 2],
+                })(
+                  <TagSelect
+                    radioable
+                    onChange={e => {
+                      this.setState(
+                        {
+                          queryObj: {
+                            ...this.state.queryObj,
+                            source: e.length === 1 ? e.toString() : null,
+                          },
+                        },
+                        e => {
+                          this.change(e);
+                        },
+                      );
+                    }}
+                  >
+                    <TagSelect.Option value={1}>睿泰</TagSelect.Option>
+                    <TagSelect.Option value={2}>禾教</TagSelect.Option>
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+            <StandardFormRow
+              title="状态"
+              block
+              style={{
+                paddingBottom: 11,
+              }}
+            >
+              <FormItem>
+                {getFieldDecorator('enabled', {
+                  initialValue: [0, 1],
+                })(
+                  <TagSelect
+                    radioable
+                    onChange={e => {
+                      this.setState(
+                        {
+                          queryObj: {
+                            ...this.state.queryObj,
+                            enabled: e.length === 1 ? e.toString() == 1 : null,
+                          },
+                        },
+                        e => {
+                          this.change(e);
+                        },
+                      );
+                    }}
+                  >
+                    <TagSelect.Option value={1}>启用中</TagSelect.Option>
+                    <TagSelect.Option value={0}>已禁用</TagSelect.Option>
+                  </TagSelect>,
+                )}
+              </FormItem>
+            </StandardFormRow>
+          </Form>
+        </Card>
+
         <Button type="primary" onClick={() => this.showModal()}>
           上传游戏文件包
         </Button>
@@ -200,7 +341,13 @@ class Projects extends Component {
             visible={this.state.visible}
             state={this.state.modalstate}
             onCancel={this.handleCancel}
-            update={this.init.bind(this)}
+            update={() => {
+              this.init({
+                page: 1,
+                size: size,
+              });
+              this.props.form.resetFields()
+            }}
             centered
           ></UploadFile>
         )}
@@ -217,4 +364,4 @@ class Projects extends Component {
 export default connect(({ game, loading }) => ({
   game,
   tableLoading: loading.effects['game/fetchList'],
-}))(Projects);
+}))(Form.create()(Projects));

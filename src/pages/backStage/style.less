@@ -7,124 +7,138 @@
   }
 }
 
-.coverCardList {
-  margin-bottom: -24px;
+// .coverCardList {
+//   margin-bottom: -24px;
 
-  .card {
-    padding: 0;
-    .flex {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-direction: row;
-    }
+//   .card {
+//     padding: 0;
+//     .flex {
+//       display: flex;
+//       justify-content: space-around;
+//       align-items: center;
+//       flex-direction: row;
+//     }
 
-    &:hover {
-      -webkit-box-shadow: 0 0 9px #c6c6c6;
-      -moz-box-shadow: 0 0 9px #c6c6c6;
-      box-shadow: 0 0 9px #c6c6c6;
+//     &:hover {
+//       -webkit-box-shadow: 0 0 9px #c6c6c6;
+//       -moz-box-shadow: 0 0 9px #c6c6c6;
+//       box-shadow: 0 0 9px #c6c6c6;
 
-      :global {
-        overflow: hidden;
+//       :global {
+//         overflow: hidden;
 
-        // .ant-card-cover {
-        //   -webkit-transform: scale(1.14);
-        //   -ms-transform: scale(1.14);
-        //   -o-transform: scale(1.14);
-        //   -moz-transform: scale(1.14);
-        //   transform: scale(1.14);
-        //   overflow: hidden;
-        // }
-        .ant-card-head-title {
-          color: #3e70b9;
-        }
-      }
-    }
+//         // .ant-card-cover {
+//         //   -webkit-transform: scale(1.14);
+//         //   -ms-transform: scale(1.14);
+//         //   -o-transform: scale(1.14);
+//         //   -moz-transform: scale(1.14);
+//         //   transform: scale(1.14);
+//         //   overflow: hidden;
+//         // }
+//         .ant-card-head-title {
+//           color: #3e70b9;
+//         }
+//       }
+//     }
 
-    :global {
-      .ant-card-head {
-        // background: #fafafa;
-      }
+//     :global {
+//       .ant-card-head {
+//         // background: #fafafa;
+//       }
 
-      .ant-card-head-title {
-        margin-bottom: 4px;
-      }
+//       .ant-card-head-title {
+//         margin-bottom: 4px;
+//       }
 
-      .ant-card-cover:after {
-        padding-top: 56.25%;
-        content: "";
-        display: block;
-      }
+//       .ant-card-cover:after {
+//         padding-top: 56.25%;
+//         content: "";
+//         display: block;
+//       }
 
-      .ant-card-head-title {
-        text-align: center;
-      }
+//       .ant-card-head-title {
+//         text-align: center;
+//       }
 
-      .ant-card-cover {
-        position: relative;
-        overflow: hidden;
+//       .ant-card-cover {
+//         position: relative;
+//         overflow: hidden;
 
-        // margin:20px;
-        img {
-          position: absolute;
-          // height: 100%;
-          top: 50%;
-          left: 50%;
-          -webkit-transform: translate(-50%, -50%);
-          transform: translate(-50%, -50%);
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: cover;
-          margin: auto;
-        }
-      }
+//         // margin:20px;
+//         img {
+//           position: absolute;
+//           // height: 100%;
+//           top: 50%;
+//           left: 50%;
+//           -webkit-transform: translate(-50%, -50%);
+//           transform: translate(-50%, -50%);
+//           max-width: 100%;
+//           max-height: 100%;
+//           object-fit: cover;
+//           margin: auto;
+//         }
+//       }
 
-      .ant-card-meta-description {
-        height: 44px;
-        overflow: hidden;
-        line-height: 22px;
-      }
+//       .ant-card-meta-description {
+//         height: 44px;
+//         overflow: hidden;
+//         line-height: 22px;
+//       }
 
-      .ant-card-body {
-        padding: 16px 0px;
-        background: #fafafa;
-      }
-    }
+//       .ant-card-body {
+//         padding: 16px 0px;
+//         background: #fafafa;
+//       }
+//     }
 
-    &:hover {
-      :global {
-        .ant-card-meta-title>a {
-          color: #3e70b9;
-        }
-      }
+//     &:hover {
+//       :global {
+//         .ant-card-meta-title>a {
+//           color: #3e70b9;
+//         }
+//       }
+//     }
+//   }
+
+//   .cardItemContent {
+//     display: flex;
+//     height: 20px;
+//     margin-top: 16px;
+//     margin-bottom: -4px;
+//     line-height: 20px;
+
+//     &>span {
+//       flex: 1;
+//       color: blue;
+//       font-size: 12px;
+//     }
+
+//     .avatarList {
+//       flex: 0 1 auto;
+//     }
+//   }
+
+//   .cardList {
+//     margin-top: 24px;
+//   }
+
+//   :global {
+//     .ant-list .ant-list-item-content-single {
+//       max-width: 100%;
+//     }
+//   }
+// }
+
+.filterBox {
+  margin-bottom: 16px !important;
+  .gameFilter {
+    margin-bottom: 12px !important;
+    div {
+      width: 320px;
     }
   }
+}
 
-  .cardItemContent {
-    display: flex;
-    height: 20px;
-    margin-top: 16px;
-    margin-bottom: -4px;
-    line-height: 20px;
-
-    &>span {
-      flex: 1;
-      color: blue;
-      font-size: 12px;
-    }
-
-    .avatarList {
-      flex: 0 1 auto;
-    }
-  }
-
-  .cardList {
-    margin-top: 24px;
-  }
-
-  :global {
-    .ant-list .ant-list-item-content-single {
-      max-width: 100%;
-    }
-  }
+.cardList {
+  margin-top: 16px;
 }

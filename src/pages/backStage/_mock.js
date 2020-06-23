@@ -4,13 +4,22 @@ function fakeList() {
 	for (let i = 0; i < 12; i += 1) {
 		list.push(
 			{
-				"id": i + 1,
-				"gameName": "测试测试0测试6测试2测试7测试-43",
-				"enabled": true,
-				"source": 1,
-				"type": 1,
-				"gameDescription": "测试测试0测试6测试2测试7测试测试测试0测试6测试2测试7测试",
-				"thumbnail": "http://storage.aixuexi.com/u/80etDFEzFb54"
+        "id": i+1,
+        "gameId": "retech-test",
+        "gameName": "睿泰最新修改测试包",
+        "gameDescription": "睿泰最新修改测试包",
+        "source": 1,
+        "type": 1,
+        "enabled": true,
+        "uploadTime": 1589541588000,
+        "isPublic": true,
+        "isIframe": false,
+        "cdnPath": "https://img-courseware.aixuexi.com/2655a765-166f-4e75-8ad5-ce2760373447/games/retech/rt_course/retech-test",
+        "assets": {
+          "images/thumb.png": "images/thumb.png"
+        },
+        "replacement": {},
+        "version": 7
 			}
 		);
 	}

@@ -2,11 +2,19 @@ import { Button, Form, Input, message, Upload, Checkbox, Icon, Switch, Radio, Mo
 import React, { Component } from 'react';
 import { connect } from 'dva';
 const { Dragger } = Upload;
-@connect(({ game, loading }) => ({
-  game,
-}))
 export const UploadFile = Form.create({ name: 'upload_file' })(
-  
+  // this.setState({ fileList });
+  // if(e.fileList.length <= 1)
+  //  return
+  // multiple: false,
+  // onChange: this.handleChange,
+  // onRemove: this.handleRemove,
+  // initialValue: undefined,
+  // { required: true, message: '请输入游戏名称' },
+  // { required: true, message: '请输入游戏简介' },
+  @connect(({ game, loading }) => ({
+    game,
+  }))
   class extends React.Component {
     state = {
       fileList: [],
@@ -14,7 +22,7 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
       confirmLoading: false,
     };
     handleChange = info => {
-      if(!this.checkFile(info)) {
+      if (!this.checkFile(info)) {
         return;
       }
       let fileList = [...info.fileList];
@@ -26,7 +34,6 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
         return file;
       });
       this.setState({ fileList: [...fileList] });
-      // this.setState({ fileList });
     };
 
     handleCreate = () => {
@@ -39,29 +46,30 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
             let file = values.file[values.file.length - 1];
             formData.append('file', file.originFileObj);
           }
-          console.log(values.file,  'values.file')
+          console.log(values.file, 'values.file');
 
-          formData.append('isIframe', values['source'] == 2 ? true : false);
-          formData.append('type', values['source'] == 1 ? 1 : 2);
-          
+          // formData.append('isIframe', values['source'] == 2 ? true : false);
+          // formData.append('type', values['source'] == 1 ? 1 : 2);
+
           for (let key in values) {
-            if (key !== 'file' && key !== 'isIframe' ) formData.append(key, values[key]);
+            if (key !== 'file' && key !== 'isIframe') formData.append(key, values[key]);
+            if(key === 'isIframe') formData.append('isIframe', !!values['isIframe']);
           }
           this.setState({
-            confirmLoading: true
-          })
+            confirmLoading: true,
+          });
           await dispatch({
             type: 'game/postUploadGame',
             payload: formData,
           });
           this.setState({
-            confirmLoading: false
-          })
+            confirmLoading: false,
+          });
           const {
             game: { uploadGameRes = {} },
           } = this.props;
           if (uploadGameRes.status === 1 && uploadGameRes.errorCode === 0) {
-            this.props.update({ page: 1, size: 20 });
+            this.props.update();
             this.props.onCancel();
           }
         }
@@ -69,58 +77,59 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
     };
     checkFile = file => {
       let fileName = file.file.name;
-      let pos = fileName.lastIndexOf(".");
+      let pos = fileName.lastIndexOf('.');
       let lastName = fileName.substring(pos, fileName.length);
-      if (lastName.toLowerCase() != ".zip") {
+      if (lastName.toLowerCase() != '.zip') {
         return false;
       }
-      return true
-    }
+      return true;
+    };
     normFile = e => {
       let limit = 1;
 
       if (Array.isArray(e)) {
         return e;
       }
-      console.log(e,'eeeee',e.fileList.length, e &&
-      e.fileList &&
-      e.fileList
-        .filter((item, index, arr) => {
-          return index > arr.length - (limit + 1);
-        }))
-      if(!this.checkFile(e)){
-        message.warning("文件必须为.zip类型");
-        e.fileList.pop()
-        // if(e.fileList.length <= 1)
-        //  return 
+      console.log(
+        e,
+        'eeeee',
+        e.fileList.length,
+        e &&
+          e.fileList &&
+          e.fileList.filter((item, index, arr) => {
+            return index > arr.length - (limit + 1);
+          }),
+      );
+      if (!this.checkFile(e)) {
+        message.warning('文件必须为.zip类型');
+        e.fileList.pop();
       }
       return (
         e &&
         e.fileList &&
-        e.fileList
-          .filter((item, index, arr) => {
-            return index > arr.length - (limit + 1);
-          })
+        e.fileList.filter((item, index, arr) => {
+          return index > arr.length - (limit + 1);
+        })
       );
     };
     handleRemove = info => {
       this.setState({ fileList: [] });
     };
-    checkGameName = (rule, value='', callback) => {
+    checkGameName = (rule, value = '', callback) => {
       if (value.trim().length === 0) {
         return callback('请输入游戏名称');
       } else if (value.trim().length > 10) {
-         callback('最多10个字符');
+        callback('最多10个字符');
       }
-       callback();
+      callback();
     };
-    checkGameDescription = (rule, value='', callback) => {
+    checkGameDescription = (rule, value = '', callback) => {
       if (value.trim().length === 0) {
         return callback('请输入游戏简介');
       } else if (value.trim().length > 15) {
-         callback('最多15个字符');
+        callback('最多15个字符');
       }
-       callback();
+      callback();
     };
     render() {
       const formItemLayout = {
@@ -143,9 +152,6 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
         beforeUpload: file => {
           return false;
         },
-        // multiple: false,
-        // onChange: this.handleChange,
-        // onRemove: this.handleRemove,
       };
 
       const submitFormLayout = {
@@ -169,12 +175,11 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
           <Form {...formItemLayout}>
             <Form.Item label="资源包">
               {getFieldDecorator('file', {
-                // initialValue: undefined,
                 valuePropName: 'fileList',
                 getValueFromEvent: this.normFile,
                 rules: [{ required: true, message: '请上传素材或源文件' }],
               })(
-                <Dragger {...fileprops} >
+                <Dragger {...fileprops}>
                   <p className="ant-upload-drag-icon">
                     <Icon type="inbox" />
                   </p>
@@ -186,7 +191,6 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
             <Form.Item label="游戏名称" className="required">
               {getFieldDecorator('gameName', {
                 rules: [
-                  // { required: true, message: '请输入游戏名称' },
                   {
                     validator: this.checkGameName,
                   },
@@ -196,43 +200,40 @@ export const UploadFile = Form.create({ name: 'upload_file' })(
             <Form.Item label="游戏简介" className="required">
               {getFieldDecorator('gameDescription', {
                 rules: [
-                  // { required: true, message: '请输入游戏简介' },
                   {
                     validator: this.checkGameDescription,
                   },
                 ],
               })(<Input placeholder="最多15个字符" />)}
             </Form.Item>
-            {
-              <Form.Item label="来源">
-                {getFieldDecorator('source', {
-                  initialValue: '1',
-                  rules: [{ required: true, message: '请选择类型' }],
-                })(
-                  <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="1">睿泰</Radio.Button>
-                    <Radio.Button value="2">禾教</Radio.Button>
-                  </Radio.Group>,
-                )}
-              </Form.Item>
-            }
-            {/* <Form.Item label="类型">
-              {getFieldDecorator('type', {
-                initialValue: '1',
+            <Form.Item label="来源">
+              {getFieldDecorator('source', {
+                initialValue: 1,
                 rules: [{ required: true, message: '请选择类型' }],
               })(
                 <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="1">模板</Radio.Button>
-                  <Radio.Button value="2">成品</Radio.Button>
+                  <Radio.Button value={1}>睿泰</Radio.Button>
+                  <Radio.Button value={2}>禾教</Radio.Button>
                 </Radio.Group>,
               )}
-            </Form.Item> */}
-            {/* {this.props.form.getFieldValue('source') === '2' &&
-              this.props.form.getFieldValue('type') === '2' && (
-                <Form.Item label="是否iframe">
-                  {getFieldDecorator('isIframe', { valuePropName: 'checked' })(<Switch />)}
-                </Form.Item>
-              )} */}
+            </Form.Item>
+            <Form.Item label="类型">
+              {getFieldDecorator('type', {
+                initialValue: 1,
+                rules: [{ required: true, message: '请选择类型' }],
+              })(
+                <Radio.Group buttonStyle="solid" onChange={(e) => {
+                  this.props.form.setFieldsValue({'isIframe': e.target.value === 2})
+                }}>
+                  <Radio.Button value={1}>模板</Radio.Button>
+                  <Radio.Button value={2}>成品</Radio.Button>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+
+            <Form.Item label="是否iframe">
+              {getFieldDecorator('isIframe', { valuePropName: 'checked' })(<Switch />)}
+            </Form.Item>
           </Form>
         </Modal>
       );

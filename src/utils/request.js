@@ -4,7 +4,10 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
-const baseUrl = 'http://admin.slide.aixuexi.com'
+// const baseUrl = 'http://admin.slide.aixuexi.com'
+let protocol = window.location.protocol; //协议
+let host = window.location.host; //主机
+let baseUrl = protocol + '//' + host
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
