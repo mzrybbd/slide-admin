@@ -102,17 +102,27 @@ export default {
           path: '/courseTemplate/:id',
           component: './courseTemplate/components/Editor',
         },
-        {
-          path: '/contentTemplate',
-          name: 'contentTemplate',
-          icon: 'project',
-          component: './contentTemplate',
+        // {
+        //   path: '/contentTemplate',
+        //   name: 'contentTemplate',
+        //   icon: 'project',
+        //   component: './contentTemplate',
+        // },
+        // {
+        //   path: '/commentBlocks',
+        //   name: 'commentBlocks',
+        //   icon: 'edit',
+        //   component: './commentBlocks',
+        // },
+         {
+          path: '/themeSystem',
+          name: 'themeSystem',
+          icon: 'edit',
+          component: './themeSystem',
         },
         {
-          path: '/commentBlocks',
-          name: 'commentBlocks',
-          icon: 'edit',
-          component: './commentBlocks',
+          path: '/themeSystem/:id',
+          component: './themeSystem/component',
         },
         {
           path: '/backStage',
@@ -191,6 +201,11 @@ export default {
       target: 'http://admin.slide.aixuexi.com/game',
       changeOrigin: true,
       pathRewrite: { '^/game': '' },
+    },
+    '/api': {
+      target: 'http://admin.slide.aixuexi.com/api',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
     },
   },
 };
