@@ -114,7 +114,7 @@ export default {
         //   icon: 'edit',
         //   component: './commentBlocks',
         // },
-         {
+        {
           path: '/themeSystem',
           name: 'themeSystem',
           icon: 'edit',
@@ -124,6 +124,12 @@ export default {
           path: '/themeSystem/:id',
           component: './themeSystem/component',
         },
+        // {
+        //   path: '/themeSystem/162',
+        //   name: 'themeSystem',
+        //   icon: 'edit',
+        //   component: './themeSystem/component',
+        // },
         {
           path: '/backStage',
           name: 'backStage',
@@ -203,7 +209,7 @@ export default {
       pathRewrite: { '^/game': '' },
     },
     '/api': {
-      target: 'http://admin.slide.aixuexi.com/api',
+      target: 'http://slide.aixuexi.com/api',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },

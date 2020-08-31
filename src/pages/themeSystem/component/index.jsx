@@ -18,7 +18,15 @@ const TEMPLATE_TYPE = {
   通用题目页: 3,
   目录: 4
 };
-
+const slideTypes = {
+  1: '封面页',
+  2: '讲次标题页',
+  3: '目录',
+  4: '模块页',
+  5: '正文',
+  6: '题目',
+  7: '结尾页',
+}
 class ThemeDetail extends Component {
   state = {
     visible: false,
@@ -28,13 +36,15 @@ class ThemeDetail extends Component {
 
   columns = [
     { title: '模板类型', dataIndex: 'templateTypeName', key: 'templateTypeName' },
-    { title: '课件页类型', dataIndex: 'name', key: 'name' },
+    { title: '课件页类型', dataIndex: 'slideName', key: 'slideName',render: (text, record) => {
+      return record.themeTypeName
+    }},
     {
       title: 'ID',
       dataIndex: 'themeType',
       key: 'themeType',
     },
-    { title: '课件页名称', dataIndex: 'slideName', key: 'slideName' },
+    { title: '课件页名称', dataIndex: 'name', key: 'name' },
     {
       title: '状态',
       dataIndex: 'status',
@@ -81,10 +91,13 @@ class ThemeDetail extends Component {
     });
   };
   handlePreview({ id }) {
-    window.open(`http://slide.aixuexi.com/static-v2/player.html?themeSlideId=${id}`);
+    window.open(`//slide.aixuexi.com/template/player.html?themeSlideId=${id}`);
+    // window.open(`//test.aixuexi.com:3001/player.html?themeSlideId=${id}`);
   }
-  handleEdit({id, templateType}) {
-    window.open(`http://slide.aixuexi.com/static-v2/editor.html?themeSlideId=${id}&templateType=${templateType}`);
+  handleEdit({ id }) {
+    window.open(`//slide.aixuexi.com/template/editor.html?themeSlideId=${id}`);
+    // window.open(`//test.aixuexi.com:3001/editor.html?themeSlideId=${id}`);
+
   }
   handleCancel = () => {
     this.setState({
@@ -105,6 +118,12 @@ class ThemeDetail extends Component {
       payload: {
         themeId: this.props.match.params.id,
       }
+    });
+    await dispatch({
+      type: 'theme/getThemeRecordTypes',
+      payload: {
+        themeId: this.props.match.params.id,
+      },
     });
   }
 
@@ -138,7 +157,7 @@ class ThemeDetail extends Component {
         type: 'theme/toggleRecordStatus',
         payload: {
           id: record.id,
-          active: record.active
+          active: !record.active
         },
       }).then(() => {
         const { toggleRes } = that.props.theme

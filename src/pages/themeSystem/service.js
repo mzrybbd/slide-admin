@@ -5,7 +5,7 @@ import qs from 'qs';
  *  获取主题列表
  */
 export async function getThemeList() {
-  return request(`/api/v2/theme/list`);
+  return request(`/api/v3/theme/list`);
 }
 
 /**
@@ -18,13 +18,13 @@ export async function getThemeDetail(params) {
  *  获取主题下模板类型
  */
 export async function getThemeTypes(params) {
-  return request(`/api/v2/theme/${params.themeId}/templateTypes`);
+  return request(`/api/v3/theme/${params.themeId}/templateStructure`);
 }
 /**
  *  新建主题课件页
  */
 export async function createThemeRecord(params) {
-  return request(`/api/v2/theme/${params.themeId}/themeSlides`, {
+  return request(`/api/v3/theme/${params.themeId}/themeSlides`, {
     method: 'POST',
     data: params,
   });
@@ -33,7 +33,7 @@ export async function createThemeRecord(params) {
  *  课件页类型编辑
  */
 export async function updateThemeRecord(params) {
-  return request(`/api/v2/themeSlide/${params.themeId}/info`, {
+  return request(`/api/v3/themeSlide/${params.slideId}/info`, {
     method: 'PUT',
     data: params,
   });

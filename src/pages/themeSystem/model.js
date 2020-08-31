@@ -5,7 +5,7 @@ import { message } from 'antd';
 const Model = {
   namespace: 'theme',
   state: {
-    list: {},
+    list: [],
     themeDetail: {},
     themeTypes: [],
     createRes: {},
@@ -18,7 +18,7 @@ const Model = {
       const response = yield call(getThemeList, payload);
       yield put({
         type: 'getThemeList',
-        payload: response
+        payload: response.data
       });
       if (response.status !== 0) {
         message.error(response.errorMessage || '接口调用失败')
@@ -87,7 +87,7 @@ const Model = {
   },
   reducers: {
     getThemeList(state, action) {
-      return { ...state, list: action.payload || {}};
+      return { ...state, list: action.payload || []};
     },
     getThemeDetail(state, action) {
       return { ...state, themeDetail: action.payload || {}};

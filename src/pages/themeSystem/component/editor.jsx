@@ -34,7 +34,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
     };
 
     handleCreate = () => {
-      const { form, dispatch, themeId, data } = this.props;
+      const { form, dispatch, data, themeId } = this.props;
 
       form.validateFields(async (err, values) => {
         if (!err) {
@@ -60,6 +60,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
               this.props.onCancel();
             }
           }else {
+            values.slideId = data.id
             await dispatch({
               type: 'theme/putThemeRecord',
               payload: values,
@@ -170,7 +171,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
                     message: '课件页名称不超过20个字符',
                   },
                 ],
-                initialValue: data ? data.slideName : ''
+                initialValue: data ? data.name : ''
               })(<Input placeholder="请输入名称，不超过20个字符" />)}
             </Form.Item>
           </Form>

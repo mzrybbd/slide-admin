@@ -9,6 +9,7 @@ import {
 import router from 'umi/router';
 import { connect } from 'dva';
 import styles from './style.less';
+import moment from 'moment';
 
 let pageNo = 1;
 let size = 20;
@@ -22,6 +23,12 @@ class ThemeList extends Component {
   columns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
     { title: '课程名称', dataIndex: 'name', key: 'name' },
+    { title: '状态', dataIndex: 'active', key: 'active', render: (text) => {
+      return text ? '启用中' : '禁用中'
+    }},
+    { title: '创建时间', dataIndex: 'createAt', key: 'createAt',render: (text) => {
+      return moment(text).format('YYYY-MM-DD HH:mm')
+    }},
     {
       title: '操作',
       key: 'enabled',
@@ -76,11 +83,11 @@ class ThemeList extends Component {
 
   render() {
     const {
-      theme: { list = {} },
+      theme: { list = [] },
     } = this.props;
     const table = {
       rowKey: 'id',
-      dataSource: list.data || [],
+      dataSource: list,
       columns: this.columns,
       rowKey: 'id',
       pagination: Array.isArray(list.data) && list.data.length > 1 ? 'bottom' : 'none',
