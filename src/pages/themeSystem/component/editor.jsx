@@ -120,7 +120,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
       const { visible, onCancel, form, title, status, data } = this.props;
       const { getFieldDecorator } = form;
       const { templateType, themeType } = this.state;
-
+      console.log(data, 'dataaa')
       return (
         <Modal
           title={title}
@@ -150,7 +150,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
             <Form.Item label="课件页类型">
               {getFieldDecorator('themeType', {
                 rules: [{ required: true, message: '请选择课件页类型' }],
-                initialValue: themeType.length ? themeType[0].id : null,
+                initialValue: data ? data.themeType : (themeType.length ? themeType[0].id : null),
               })(
                 <Select placeholder="请选择课件页类型">
                   {themeType.map(item => (
