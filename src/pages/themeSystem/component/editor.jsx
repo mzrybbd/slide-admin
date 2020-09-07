@@ -120,7 +120,7 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
       const { visible, onCancel, form, title, status, data } = this.props;
       const { getFieldDecorator } = form;
       const { templateType, themeType } = this.state;
-      console.log(data, 'dataaa')
+
       return (
         <Modal
           title={title}
@@ -165,14 +165,13 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
               {getFieldDecorator('name', {
                 rules: [
                   { required: true, message: '请输入课件页名称' },
-
                   {
-                    max: 20,
-                    message: '课件页名称不超过20个字符',
+                    max: 8,
+                    message: '课件页名称不超过8个字符',
                   },
                 ],
                 initialValue: data ? data.name : ''
-              })(<Input placeholder="请输入名称，不超过20个字符" />)}
+              })(<Input placeholder="请输入名称，不超过8个字符" />)}
             </Form.Item>
           </Form>
         </Modal>
