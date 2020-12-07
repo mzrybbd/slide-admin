@@ -54,16 +54,16 @@ const BasicLayout = props => {
    * constructor
    */
 
-  useEffect(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
-      });
-      dispatch({
-        type: 'settings/getSetting',
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (dispatch) {
+  //     dispatch({
+  //       type: 'user/fetchCurrent',
+  //     });
+  //     dispatch({
+  //       type: 'settings/getSetting',
+  //     });
+  //   }
+  // }, []);
   /**
    * init variables
    */
@@ -106,7 +106,6 @@ const BasicLayout = props => {
           <span>{route.breadcrumbName}</span>
         );
       }}
-      footerRender={footerRender}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
       rightContentRender={rightProps => <RightContent {...rightProps} />}

@@ -3,6 +3,7 @@ package.json
 .umi
 .umi-production
 /dist
+/prod
 .dockerignore
 .DS_Store
 .eslintignore

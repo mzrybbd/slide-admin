@@ -4,12 +4,18 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+// const baseUrl = 'http://admin.slide.aixuexi.com'
+let protocol = window.location.protocol; //协议
+let host = window.location.host; //主机
+let baseUrl = protocol + '//' + host
+
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
   201: '新建或修改数据成功。',
   202: '一个请求已经进入后台排队（异步任务）。',
-  204: '删除数据成功。',
-  400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
+  204: '处理中',
+  300: '参数校验失败',
+  400: '用户为登录',
   401: '用户没有权限（令牌、用户名、密码错误）。',
   403: '用户得到授权，但是访问是被禁止的。',
   404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
@@ -20,6 +26,9 @@ const codeMessage = {
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
+  510: '结构模版不存在',
+  511: '模版元素为空',
+  590: 'freemarker内容正确',
 };
 /**
  * 异常处理程序
@@ -50,7 +59,9 @@ const errorHandler = error => {
 
 const request = extend({
   errorHandler,
+  prefix: baseUrl,
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
+
 export default request;

@@ -30,11 +30,11 @@ const plugins = [
       },
       pwa: pwa
         ? {
-            workboxPluginMode: 'InjectManifest',
-            workboxOptions: {
-              importWorkboxFrom: 'local',
-            },
-          }
+          workboxPluginMode: 'InjectManifest',
+          workboxOptions: {
+            importWorkboxFrom: 'local',
+          },
+        }
         : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
@@ -81,42 +81,60 @@ export default {
     ie: 11,
   },
   devtool: isAntDesignProPreview ? 'source-map' : false,
+  outputPath: 'prod',
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
     {
-      path: '/user',
-      component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
-    {
       path: '/',
-      component: '../layouts/SecurityLayout',
+      component: '../layouts/BasicLayout',
       routes: [
         {
           path: '/',
-          component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
-          routes: [
-            {
-              path: '/',
-              redirect: '/welcome',
-            },
-            {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
-            },
-            {
-              component: './404',
-            },
-          ],
+          redirect: '/courseTemplate',
+        },
+        {
+          path: '/courseTemplate',
+          name: 'courseTemplate',
+          icon: 'profile',
+          component: './courseTemplate',
+        },
+        {
+          path: '/courseTemplate/:id',
+          component: './courseTemplate/components/Editor',
+        },
+        // {
+        //   path: '/contentTemplate',
+        //   name: 'contentTemplate',
+        //   icon: 'project',
+        //   component: './contentTemplate',
+        // },
+        // {
+        //   path: '/commentBlocks',
+        //   name: 'commentBlocks',
+        //   icon: 'edit',
+        //   component: './commentBlocks',
+        // },
+        {
+          path: '/themeSystem',
+          name: 'themeSystem',
+          icon: 'edit',
+          component: './themeSystem',
+        },
+        {
+          path: '/themeSystem/:id',
+          component: './themeSystem/component',
+        },
+        // {
+        //   path: '/themeSystem/162',
+        //   name: 'themeSystem',
+        //   icon: 'edit',
+        //   component: './themeSystem/component',
+        // },
+        {
+          path: '/backStage',
+          name: 'backStage',
+          icon: 'setting',
+          component: './backStage',
         },
         {
           component: './404',
@@ -169,13 +187,31 @@ export default {
     basePath: '/',
   },
   chainWebpack: webpackPlugin,
-  /*
   proxy: {
-    '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
+    '/structureTempApi/toolbarInfo/subjectProducts': {
+      target: 'http://admin.slide.aixuexi.com/structureTempApi/toolbarInfo/subjectProducts/',
       changeOrigin: true,
-      pathRewrite: { '^/server': '' },
+      pathRewrite: { '^/structureTempApi/toolbarInfo/subjectProducts': '' },
+    },
+    '/structureTempApi/structureTemps': {
+      target: 'http://admin.slide.aixuexi.com/structureTempApi/structureTemps',
+      changeOrigin: true,
+      pathRewrite: { '^/structureTempApi/structureTemps': '' },
+    },
+    '/structureTempEditor/structureTemps': {
+      target: 'http://admin.slide.aixuexi.com/structureTempEditor/structureTemps/',
+      changeOrigin: true,
+      pathRewrite: { '^/structureTempEditor/structureTemps': '' },
+    },
+    '/game': {
+      target: 'http://admin.slide.aixuexi.com/game',
+      changeOrigin: true,
+      pathRewrite: { '^/game': '' },
+    },
+    '/api': {
+      target: 'http://slide.aixuexi.com/api',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
     },
   },
-  */
 };
