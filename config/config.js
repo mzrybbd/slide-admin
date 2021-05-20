@@ -188,23 +188,22 @@ export default {
   },
   chainWebpack: webpackPlugin,
   proxy: {
-    '/structureTempApi/toolbarInfo/subjectProducts': {
-      target: 'http://admin.slide.aixuexi.com/structureTempApi/toolbarInfo/subjectProducts/',
+    '/structureTempApi/**': {
+      target: 'http://admin-slide.aixuexi.com/',
       changeOrigin: true,
-      pathRewrite: { '^/structureTempApi/toolbarInfo/subjectProducts': '' },
     },
-    '/structureTempApi/structureTemps': {
-      target: 'http://admin.slide.aixuexi.com/structureTempApi/structureTemps',
+    // '/structureTempApi/structureTemps': {
+    //   target: 'http://admin-slide.aixuexi.com/structureTempApi/structureTemps',
+    //   changeOrigin: true,
+    //   pathRewrite: { '^/structureTempApi/structureTemps': '' },
+    // },
+    '/structureTempEditor/**': {
+      target: 'http://admin-slide.aixuexi.com/',
       changeOrigin: true,
-      pathRewrite: { '^/structureTempApi/structureTemps': '' },
-    },
-    '/structureTempEditor/structureTemps': {
-      target: 'http://admin.slide.aixuexi.com/structureTempEditor/structureTemps/',
-      changeOrigin: true,
-      pathRewrite: { '^/structureTempEditor/structureTemps': '' },
+      // pathRewrite: { '^/structureTempEditor/structureTemps': '' },
     },
     '/game': {
-      target: 'http://admin.slide.aixuexi.com/game',
+      target: 'http://admin-slide.aixuexi.com/game',
       changeOrigin: true,
       pathRewrite: { '^/game': '' },
     },

@@ -6,7 +6,7 @@
 /src/utils/request-temp.js
 _roadhog-api-doc
 **/dist
-**/prod
+# **/prod
 # production
 /.vscode
 
@@ -17,8 +17,8 @@ yarn-error.log
 
 /coverage
 .idea
-yarn.lock
-package-lock.json
+# yarn.lock
+# package-lock.json
 *bak
 .vscode
 

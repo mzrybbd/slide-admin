@@ -23,41 +23,38 @@ const formItemLayout = {
 };
 
 export const CreateTemplate = Form.create({ name: 'create_slide' })(
-  @connect(({ theme }) => ({
+  @connect(({ theme ,loading}) => ({
     theme,
+    confirmLoading:  loading.effects['theme/postThemeRecord'] || loading.effects['theme/putThemeRecord'],
   }))
   class extends React.Component {
     state = {
-      confirmLoading: false,
-      templateType: [],
-      themeType: [],
+      templateTypes: [],
+      themeTypes: [],
+      initTemplateType: null,
+      initThemeType: null,
     };
 
     handleCreate = () => {
-      const { form, dispatch, data, themeId } = this.props;
+      const { form, dispatch, themeId, data, update } = this.props;
 
       form.validateFields(async (err, values) => {
         if (!err) {
-          let formData = new FormData();
+     
           values.themeId = themeId
-          this.setState({
-            confirmLoading: true,
-          });
-          if(!data) {
+   
+          if(!update) {
             await dispatch({
               type: 'theme/postThemeRecord',
               payload: values,
             });
-            this.setState({
-              confirmLoading: false,
-            });
+
             const {
               theme: { createRes = {} },
             } = this.props;
             if (!createRes.status) {
               message.success('创建成功')
-              this.props.update();
-              this.props.onCancel();
+              this.props.onSuccess();
             }
           }else {
             values.slideId = data.id
@@ -65,16 +62,13 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
               type: 'theme/putThemeRecord',
               payload: values,
             });
-            this.setState({
-              confirmLoading: false,
-            });
+
             const {
               theme: { updateRes = {} },
             } = this.props;
             if (!updateRes.status) {
               message.success('更新成功')
-              this.props.update();
-              this.props.onCancel();
+              this.props.onSuccess();
             }
           }
 
@@ -87,39 +81,54 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
     }
 
     async init() {
-      const { dispatch, themeId, data } = this.props;
-      await dispatch({
-        type: 'theme/getThemeRecordTypes',
-        payload: {
-          themeId: themeId,
-        },
-      });
-      const themeTypes = this.props.theme.themeTypes;
-      if(data) {
-        let themeType = themeTypes.filter(item => item.templateType === data.templateType)
-        this.setState({
-          templateType: themeTypes,
-          themeType: themeType.length ? themeType[0].themeList : [],
-        });
-      }else {
-        this.setState({
-          templateType: themeTypes,
-          themeType: themeTypes.length ? themeTypes[0].themeList : [],
+      const { dispatch, themeId, data, theme: { themeTypes } } = this.props;
+      if(themeTypes.length === 0) {
+        await dispatch({
+          type: 'theme/getThemeRecordTypes',
+          payload: {
+            themeId: themeId,
+          },
         });
       }
-
+      this.initSelectOptions()
     }
 
-    changeThemeType(tag) {
-      let templateType = this.state.templateType.filter(item => item.templateType === tag)
-      this.setState({themeType: templateType.length ? templateType[0].themeList : []})
-      this.props.form.resetFields(['themeType'])
+    initSelectOptions() {
+      const { data, theme: { themeTypes: templateTypes } } = this.props;
+      let themeTypes = templateTypes[0].themeList
+      let initTemplateType = templateTypes[0].templateType
+      let initThemeType = templateTypes[0].themeList[0].id
+      
+      // 默认课件页类型
+      if(data && data.themeType) {
+        const template = templateTypes.find(template => template.themeList.find(theme=> theme.id === data.themeType))
+        initTemplateType = template.templateType
+        themeTypes = template.themeList
+        initThemeType = data.themeType
+      }
+      this.setState({
+        templateTypes,
+        themeTypes,
+        initTemplateType,
+        initThemeType
+      });
+    }
+    
+    changeTemplateType(tag) {
+      let templateType = this.state.templateTypes.find(item => item.templateType === tag)
+
+      this.setState({
+        themeTypes: templateType.themeList,
+        initThemeType:  templateType.themeList[0].id,
+      })
+      this.props.form.resetFields(['themeTypes'])
     }
 
     render() {
-      const { visible, onCancel, form, title, status, data } = this.props;
+      const { visible, onCancel, form, update, data, confirmLoading } = this.props;
       const { getFieldDecorator } = form;
-      const { templateType, themeType } = this.state;
+      const { templateTypes, themeTypes, initTemplateType, initThemeType } = this.state;
+      const title = update ?  '更新课件页' : '新增课件页';
 
       return (
         <Modal
@@ -128,32 +137,32 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
           onOk={this.handleCreate.bind(this)}
           onCancel={onCancel}
           maskClosable={false}
-          confirmLoading={this.state.confirmLoading}
+          confirmLoading={confirmLoading}
           okText="确定"
           cancelText="取消"
         >
           <Form {...formItemLayout}>
-          {!status && <Form.Item label="模板类型">
+            <Form.Item label="模板类型">
               {getFieldDecorator('templateType', {
                 rules: [{ required: true, message: '请选择模板类型' }],
-                initialValue: templateType.length ? templateType[0].templateType : null,
+                initialValue: initTemplateType,
               })(
-                <Select placeholder="请选择模板类型" onChange={tag => this.changeThemeType(tag)}>
-                  {templateType.map(item => (
+                <Select placeholder="请选择模板类型" disabled={update}  onChange={tag => this.changeTemplateType(tag)}>
+                  {templateTypes.map(item => (
                     <Select.Option value={item.templateType} key={item.templateType}>
                       {item.name}
                     </Select.Option>
                   ))}
                 </Select>,
               )}
-            </Form.Item>}
+            </Form.Item>
             <Form.Item label="课件页类型">
               {getFieldDecorator('themeType', {
                 rules: [{ required: true, message: '请选择课件页类型' }],
-                initialValue: data ? data.themeType : (themeType.length ? themeType[0].id : null),
+                initialValue: initThemeType
               })(
-                <Select placeholder="请选择课件页类型">
-                  {themeType.map(item => (
+                <Select placeholder="请选择课件页类型" disabled={update} >
+                  {themeTypes.map(item => (
                     <Select.Option value={item.id} key={item.id}>
                       {item.name}
                     </Select.Option>
@@ -177,5 +186,5 @@ export const CreateTemplate = Form.create({ name: 'create_slide' })(
         </Modal>
       );
     }
-  },
+  }
 );

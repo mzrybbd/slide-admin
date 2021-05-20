@@ -8,6 +8,7 @@ import {
 } from 'antd';
 import router from 'umi/router';
 import { connect } from 'dva';
+import ThemeEditor from './ThemeEditor'
 import styles from './style.less';
 import moment from 'moment';
 
@@ -18,11 +19,16 @@ class ThemeList extends Component {
   state = {
     visible: false,
     current: 1,
+    editData: null,
   };
 
   columns = [
     { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: '课程名称', dataIndex: 'name', key: 'name' },
+    { title: '主题名称', dataIndex: 'name', key: 'name' },
+    { title: '学科', dataIndex: 'subjectName', key: 'subjectName' },
+    { title: '年份', dataIndex: 'yearList', key: 'yearList', render: (list) => {
+      return <p className={styles.colYears}>{list.join("、")}</p>
+    }},
     { title: '状态', dataIndex: 'active', key: 'active', render: (text) => {
       return text ? '启用中' : '禁用中'
     }},
@@ -34,16 +40,26 @@ class ThemeList extends Component {
       key: 'enabled',
       render: (text, record) => (
         <>
-          <Button onClick={() => this.editTheme(record.id)} type="link">
-            {'查看'}
+          <Button onClick={() => this.toThemeDetail(record.id)} type="link">
+            查看
+          </Button>
+          <Button onClick={() => this.editTheme(record)} type="link">
+            修改信息
           </Button>
         </>
       ),
     },
   ];
 
-  editTheme = id => {
+  toThemeDetail = id => {
     router.push(`/themeSystem/${id}`);
+  }
+
+  editTheme = record => {
+    this.setState({
+      editData: record,
+      visible: true,
+    })
   }
 
   showModal = () => {
@@ -52,9 +68,10 @@ class ThemeList extends Component {
     });
   };
 
-  handleCancel = () => {
+  hideModal = () => {
     this.setState({
       visible: false,
+      editData: null,
     });
   };
 
@@ -64,6 +81,7 @@ class ThemeList extends Component {
       size: size,
     });
   }
+
   async init(data) {
     const { dispatch } = this.props;
     await dispatch({
@@ -80,6 +98,14 @@ class ThemeList extends Component {
       size: size,
     });
   };
+
+  onFormSuccess = () => {
+    this.hideModal()
+    this.init({
+      page: pageNo,
+      size: size,
+    });
+  }
 
   render() {
     const {
@@ -106,26 +132,17 @@ class ThemeList extends Component {
         emptyText: '暂无数据' ,
       },
     };
+    const { visible, editData } = this.state
 
     return (
       <div>
-        {/* <Button type="primary" onClick={() => this.showModal()}>
-          新建主题
-        </Button> */}
-        {/* {this.state.visible && (
-          <CreateTheme
-            visible={this.state.visible}
-            state={this.state.modalstate}
-            onCancel={this.handleCancel}
-            update={() => {
-              this.init({
-                page: 1,
-                size: size,
-              });
-            }}
-            centered
-          ></CreateTheme>
-        )} */}
+        <Button type="primary" onClick={this.showModal}>+新增主题</Button>
+        {visible && <ThemeEditor
+          data={editData}
+          visible={visible}
+          onCancel={this.hideModal}
+          onSuccess={this.onFormSuccess}
+        />}
         <div className={styles.cardList}>
           <Table {...table} bordered style={{ wordBreak: 'break-all' }} size="middle" />
         </div>

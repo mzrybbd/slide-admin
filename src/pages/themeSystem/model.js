@@ -1,4 +1,18 @@
-import { getThemeList, getThemeDetail, getThemeTypes, createThemeRecord, updateThemeRecord, toggleThemeRecordStatus, delThemeRecord } from './service';
+import { 
+  getThemeList,
+  getThemeDetail,
+  getThemeTypes,
+  createTheme,
+  updateTheme,
+  createThemeRecord,
+  updateThemeRecord,
+  toggleThemeRecordStatus,
+  delThemeRecord,
+  querySubjectProducts,
+  getThemeSlides,
+  setThemeDefaultFormat,
+  updateThemeSlideIndex,
+} from './service';
 import router from 'umi/router';
 import { message } from 'antd';
 
@@ -12,6 +26,7 @@ const Model = {
     updateRes: {},
     toggleRes: {},
     delRes: {},
+    staticData: {},
   },
   effects: {
     *getList({ payload }, { call, put }) {
@@ -24,8 +39,11 @@ const Model = {
         message.error(response.errorMessage || '接口调用失败')
       }
     },
+    /**
+     * @deprecated
+     */
     *getDetail({ payload }, { call, put }) {
-      const response = yield call(getThemeDetail, payload);
+      const response = yield call(getThemeSlides, payload);
       yield put({
         type: 'getThemeDetail',
         payload: response.data
@@ -42,6 +60,24 @@ const Model = {
       });
       if (response.status !== 0) {
         message.error(response.errorMessage || '接口调用失败')
+      }
+    },
+    *postTheme({ payload }, { call }) {
+      const response = yield call(createTheme, payload);
+      if (response.status === 0) {
+        return true
+      } else {
+        message.error(response.errorMessage || '创建失败')
+        return false
+      }
+    },
+    *putTheme({ payload }, { call }) {
+      const response = yield call(updateTheme, payload);
+      if (response.status === 0) {
+        return true
+      } else {
+        message.error(response.errorMessage || '修改失败')
+        return false
       }
     },
     *postThemeRecord({ payload }, { call, put }) {
@@ -84,6 +120,37 @@ const Model = {
         message.error(response.errorMessage || '接口调用失败')
       }
     },
+    *querySubjectStatic({ payload }, { call, put }) {
+      const response = yield call(querySubjectProducts, payload);
+      if (response.status === 1 && response.errorCode === 0) {
+        yield put({
+          type: 'queryStaticData',
+          payload: response.body
+        });
+      } else {
+        message.error('调用学科失败')
+      }
+    },
+    *setThemeDefaultFormat({ payload }, { call }) {
+      const response = yield call(setThemeDefaultFormat, payload);
+      if (response.status === 0) {
+        return true
+      } else {
+        message.error(response.errorMessage)
+        return false
+      }
+    },
+    *sortThemeRecord({ payload }, { call }) {
+      const response = yield call(updateThemeSlideIndex, payload);
+      if (response.status === 0) {
+        return true
+      } else {
+        message.error(response.errorMessage)
+        return false
+        // return Promise.reject('排序失败')
+      }
+    },
+
   },
   reducers: {
     getThemeList(state, action) {
@@ -106,6 +173,9 @@ const Model = {
     },
     delThemeRecord(state, action) {
       return { ...state, delRes: action.payload || {} };
+    },
+    queryStaticData(state, action) {
+      return { ...state, staticData: action.payload };
     },
   },
 };

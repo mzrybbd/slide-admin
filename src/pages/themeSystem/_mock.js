@@ -200,3 +200,148 @@
 // //   'POST /api/v3/theme/1/themeSlide': (req, res) => res.send(temp3),
 // //   'PUT /api': res.send(del),
 // // };
+const x = 
+{
+  "status": 0,
+  "errorCode": 0,
+  "data": {
+    id: 123,
+    name: "ss",
+    "themeTypeList": [
+        {
+            "themeType": 1,
+            "themeTypeName": "封面页",
+            "themeSlideList": [
+                {
+                    "id": 2071,
+                    "name": "封面页",
+                    "active": true,
+                    "themeType": 1,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "封面页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                },
+                {
+                  "id": 207222,
+                  "name": "封面页2",
+                  "active": true,
+                  "themeType": 1,
+                  "templateTypeName": "普通模板页",
+                  "templateType": 1,
+                  "themeTypeName": "封面页",
+                  "defaultFormat": false,
+                  "formatIndex": 2
+              }
+            ]
+        },
+        {
+            "themeType": 2,
+            "themeTypeName": "讲次标题页",
+            "themeSlideList": [
+                {
+                    "id": 2072,
+                    "name": "讲次标题页",
+                    "active": true,
+                    "themeType": 2,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "讲次标题页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        },
+        {
+            "themeType": 4,
+            "themeTypeName": "模块页",
+            "themeSlideList": [
+                {
+                    "id": 2073,
+                    "name": "模块页",
+                    "active": true,
+                    "themeType": 4,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "模块页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        },
+        {
+            "themeType": 5,
+            "themeTypeName": "正文页",
+            "themeSlideList": [
+                {
+                    "id": 2077,
+                    "name": "正文页",
+                    "active": true,
+                    "themeType": 5,
+                    "templateTypeName": "Word碎片页",
+                    "templateType": 2,
+                    "themeTypeName": "正文页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        },
+        {
+            "themeType": 6,
+            "themeTypeName": "题目页",
+            "themeSlideList": [
+                {
+                    "id": 2074,
+                    "name": "题目页",
+                    "active": true,
+                    "themeType": 6,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "题目页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        },
+        {
+            "themeType": 7,
+            "themeTypeName": "尾页",
+            "themeSlideList": [
+                {
+                    "id": 2076,
+                    "name": "尾页",
+                    "active": true,
+                    "themeType": 7,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "尾页",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        },
+        {
+            "themeType": 8,
+            "themeTypeName": "2013视频",
+            "themeSlideList": [
+                {
+                    "id": 2075,
+                    "name": "2013视频",
+                    "active": true,
+                    "themeType": 8,
+                    "templateTypeName": "普通模板页",
+                    "templateType": 1,
+                    "themeTypeName": "2013视频",
+                    "defaultFormat": true,
+                    "formatIndex": 1
+                }
+            ]
+        }
+    ]
+  }
+}
+// export default {
+//   'GET /api/v2/themeSlide/sort': (req, res) => setTimeout(()=>res.send({status: 1,errorCode:0}),200),
+//   'GET /api/v3/theme/175/themeSlides': (req, res) => setTimeout(()=>res.send(x),200)
+// }
